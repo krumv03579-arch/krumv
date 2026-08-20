@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" width="480" height="480" role="img"><defs>
+    <linearGradient id="alg-541" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101a5c"/><stop offset="1" stop-color="#2fd6c4"/>
+    </linearGradient>
+    <radialGradient id="alv-541" cx="0.5" cy="0.4" r="0.75">
+      <stop offset="0.55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.34"/>
+    </radialGradient>
+    <filter id="al-541"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="3" seed="7"/><feColorMatrix type="saturate" values="0"/></filter></defs>
+    <rect width="480" height="480" fill="url(#alg-541)"/>
+    <path d="M-20 134.4 Q 134.4 80.4 264 134.4 T 500 116.4" fill="none" stroke="#e6fff9" stroke-opacity="0.45" stroke-width="3"/><path d="M-20 156.4 Q 134.4 107.4 264 156.4 T 500 138.4" fill="none" stroke="#e6fff9" stroke-opacity="0.42" stroke-width="3"/><path d="M-20 178.4 Q 134.4 134.4 264 178.4 T 500 160.4" fill="none" stroke="#e6fff9" stroke-opacity="0.38" stroke-width="3"/><path d="M-20 200.4 Q 134.4 161.4 264 200.4 T 500 182.4" fill="none" stroke="#e6fff9" stroke-opacity="0.35" stroke-width="3"/><path d="M-20 222.4 Q 134.4 188.4 264 222.4 T 500 204.4" fill="none" stroke="#e6fff9" stroke-opacity="0.31" stroke-width="3"/><path d="M-20 244.4 Q 134.4 215.4 264 244.4 T 500 226.4" fill="none" stroke="#e6fff9" stroke-opacity="0.28" stroke-width="3"/><path d="M-20 266.4 Q 134.4 242.4 264 266.4 T 500 248.4" fill="none" stroke="#e6fff9" stroke-opacity="0.24" stroke-width="3"/><path d="M-20 288.4 Q 134.4 269.4 264 288.4 T 500 270.4" fill="none" stroke="#e6fff9" stroke-opacity="0.21" stroke-width="3"/><path d="M-20 310.4 Q 134.4 296.4 264 310.4 T 500 292.4" fill="none" stroke="#e6fff9" stroke-opacity="0.17" stroke-width="3"/>
+    <rect width="480" height="480" fill="url(#alv-541)"/>
+    <rect width="480" height="480" filter="url(#al-541)" opacity="0.24" style="mix-blend-mode:overlay"/></svg>
