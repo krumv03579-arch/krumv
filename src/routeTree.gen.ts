@@ -16,6 +16,7 @@ import { Route as FanclubRouteImport } from './routes/fanclub'
 import { Route as FeedRouteImport } from './routes/feed'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as ArtistsIndexRouteImport } from './routes/artists.index'
@@ -57,6 +58,11 @@ const LoginRoute = LoginRouteImport.update({
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char91DotmcpChar93ListToolsRoute =
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/feed': typeof FeedRouteWithChildren
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/signup': typeof SignupRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/artists/$artistId': typeof ArtistsArtistIdRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/fanclub': typeof FanclubRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/signup': typeof SignupRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/artists/$artistId': typeof ArtistsArtistIdRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/feed': typeof FeedRouteWithChildren
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/signup': typeof SignupRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/artists/$artistId': typeof ArtistsArtistIdRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/feed'
     | '/login'
     | '/mcp'
+    | '/signup'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/artists/$artistId'
@@ -169,6 +179,7 @@ export interface FileRouteTypes {
     | '/fanclub'
     | '/login'
     | '/mcp'
+    | '/signup'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/artists/$artistId'
@@ -185,6 +196,7 @@ export interface FileRouteTypes {
     | '/feed'
     | '/login'
     | '/mcp'
+    | '/signup'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/artists/$artistId'
@@ -202,6 +214,7 @@ export interface RootRouteChildren {
   FeedRoute: typeof FeedRouteWithChildren
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
+  SignupRoute: typeof SignupRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -256,6 +269,13 @@ declare module '@tanstack/react-router' {
       path: '/mcp'
       fullPath: '/mcp'
       preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.mcp/list-tools': {
@@ -343,6 +363,7 @@ const rootRouteChildren: RootRouteChildren = {
   FeedRoute: FeedRouteWithChildren,
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,
+  SignupRoute: SignupRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,

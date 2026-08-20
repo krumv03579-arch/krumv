@@ -19,6 +19,7 @@ const COLUMNS = [
       { label: "인기 이야기", to: "/feed" },
       { label: "이번 주 룸", to: "/fanclub" },
       { label: "로그인", to: "/login" },
+      { label: "회원가입", to: "/signup" },
     ],
   },
 ] as const;

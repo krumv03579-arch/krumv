@@ -11,6 +11,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { ArtistChip } from "@/components/artist-chip";
+import { useAuth } from "@/components/auth-provider";
 import { AvatarBadge } from "@/components/avatar-badge";
 import { Panel, PanelHeader } from "@/components/panel";
 import { PostTextCard } from "@/components/post-card";
@@ -45,6 +46,7 @@ export const Route = createFileRoute("/feed/$postId")({
 function PostPage() {
   const { postId } = Route.useParams();
   const post = postById[postId];
+  const { user } = useAuth();
 
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -91,8 +93,8 @@ function PostPage() {
       ...prev,
       {
         id: `local-${Date.now()}`,
-        author: "나",
-        authorTag: "게스트",
+        author: user?.nickname ?? "나",
+        authorTag: "팬룸 멤버",
         createdLabel: "방금 전",
         body: draft.trim(),
         likes: 0,
@@ -204,22 +206,51 @@ function PostPage() {
           <Panel className="p-6 sm:p-8">
             <PanelHeader eyebrow="Comments" title={`댓글 ${comments.length}`} />
 
-            <form onSubmit={addComment} className="mt-5">
-              <Textarea
-                value={draft}
-                onChange={(event) => setDraft(event.target.value)}
-                placeholder="따뜻한 댓글을 남겨주세요."
-                className="min-h-[96px]"
-              />
-              <div className="mt-3 flex justify-end">
-                <button
-                  type="submit"
-                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
-                >
-                  댓글 등록
-                </button>
+            {user ? (
+              <form onSubmit={addComment} className="mt-5">
+                <div className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
+                  <AvatarBadge name={user.nickname} size="sm" />
+                  <span className="font-bold text-foreground">
+                    {user.nickname}
+                  </span>
+                  님으로 작성
+                </div>
+                <Textarea
+                  value={draft}
+                  onChange={(event) => setDraft(event.target.value)}
+                  placeholder="따뜻한 댓글을 남겨주세요."
+                  className="mt-2.5 min-h-[96px]"
+                />
+                <div className="mt-3 flex justify-end">
+                  <button
+                    type="submit"
+                    className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
+                  >
+                    댓글 등록
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl bg-secondary/60 px-5 py-4">
+                <p className="text-[13.5px] font-semibold text-muted-foreground">
+                  로그인하면 댓글을 남길 수 있어요.
+                </p>
+                <div className="ml-auto flex gap-2">
+                  <Link
+                    to="/login"
+                    className="rounded-full bg-primary px-4 py-2 text-[13px] font-bold text-primary-foreground transition-colors hover:bg-primary/90"
+                  >
+                    로그인
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="rounded-full border border-border bg-card px-4 py-2 text-[13px] font-bold transition-colors hover:bg-secondary"
+                  >
+                    회원가입
+                  </Link>
+                </div>
               </div>
-            </form>
+            )}
 
             <ul className="mt-6 divide-y divide-border/70">
               {comments.map((comment) => (

@@ -1,7 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Bell, Menu, Search, X } from "lucide-react";
+import { Bell, LogOut, Menu, PenLine, Search, Users, X } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
+import { useAuth } from "@/components/auth-provider";
+import { AvatarBadge } from "@/components/avatar-badge";
 import { BrandLogo } from "@/components/brand";
 import { useSearchDialog } from "@/components/search-dialog";
 import {
@@ -43,6 +46,13 @@ const NOTIFICATIONS = [
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { open: openSearch } = useSearchDialog();
+  const { user, signOut } = useAuth();
+
+  function handleSignOut() {
+    signOut();
+    setMobileOpen(false);
+    toast.success("로그아웃했어요.");
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur-xl">
@@ -119,12 +129,72 @@ export function SiteHeader() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Link
-            to="/login"
-            className="hidden h-10 items-center rounded-full bg-primary px-5 text-sm font-bold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 sm:inline-flex"
-          >
-            로그인
-          </Link>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="hidden h-10 items-center gap-2 rounded-full bg-secondary pl-1.5 pr-3.5 text-sm font-bold transition-colors hover:bg-secondary/70 sm:inline-flex"
+                >
+                  <AvatarBadge name={user.nickname} size="sm" />
+                  <span className="max-w-[110px] truncate">
+                    {user.nickname}
+                  </span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2">
+                <DropdownMenuLabel className="px-3 py-2">
+                  <span className="block text-[13px] font-bold text-foreground">
+                    {user.nickname}
+                  </span>
+                  <span className="mt-0.5 block truncate text-[11.5px] font-medium text-muted-foreground">
+                    {user.email}
+                  </span>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  asChild
+                  className="gap-2 rounded-xl px-3 py-2.5"
+                >
+                  <Link to="/feed">
+                    <PenLine className="h-4 w-4" />
+                    글쓰기
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  asChild
+                  className="gap-2 rounded-xl px-3 py-2.5"
+                >
+                  <Link to="/fanclub">
+                    <Users className="h-4 w-4" />내 팬룸
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onSelect={handleSignOut}
+                  className="gap-2 rounded-xl px-3 py-2.5 text-destructive focus:text-destructive"
+                >
+                  <LogOut className="h-4 w-4" />
+                  로그아웃
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div className="hidden items-center gap-2 sm:flex">
+              <Link
+                to="/signup"
+                className="h-10 items-center rounded-full px-3 text-sm font-bold text-muted-foreground transition-colors hover:text-foreground lg:inline-flex"
+              >
+                회원가입
+              </Link>
+              <Link
+                to="/login"
+                className="inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-bold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+              >
+                로그인
+              </Link>
+            </div>
+          )}
 
           <button
             type="button"
@@ -156,13 +226,45 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
-            <Link
-              to="/login"
-              onClick={() => setMobileOpen(false)}
-              className="mt-1 rounded-xl bg-primary px-3 py-2.5 text-center text-[15px] font-bold text-primary-foreground"
-            >
-              로그인
-            </Link>
+            {user ? (
+              <>
+                <div className="mt-1 flex items-center gap-2.5 rounded-xl bg-secondary px-3 py-2.5">
+                  <AvatarBadge name={user.nickname} size="sm" />
+                  <span className="min-w-0">
+                    <span className="block text-[14px] font-bold">
+                      {user.nickname}
+                    </span>
+                    <span className="block truncate text-[11.5px] text-muted-foreground">
+                      {user.email}
+                    </span>
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="rounded-xl border border-border px-3 py-2.5 text-[15px] font-bold text-destructive"
+                >
+                  로그아웃
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="mt-1 rounded-xl bg-primary px-3 py-2.5 text-center text-[15px] font-bold text-primary-foreground"
+                >
+                  로그인
+                </Link>
+                <Link
+                  to="/signup"
+                  onClick={() => setMobileOpen(false)}
+                  className="rounded-xl border border-border px-3 py-2.5 text-center text-[15px] font-bold"
+                >
+                  회원가입
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       )}

@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { AuthProvider } from "../components/auth-provider";
 import { SearchProvider } from "../components/search-dialog";
 import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
@@ -133,17 +134,19 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SearchProvider>
-        <div className="flex min-h-screen flex-col bg-background font-sans">
-          <SiteHeader />
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <div className="flex-1">
-            <Outlet />
+      <AuthProvider>
+        <SearchProvider>
+          <div className="flex min-h-screen flex-col bg-background font-sans">
+            <SiteHeader />
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <div className="flex-1">
+              <Outlet />
+            </div>
+            <SiteFooter />
           </div>
-          <SiteFooter />
-        </div>
-        <Toaster position="bottom-center" />
-      </SearchProvider>
+          <Toaster position="bottom-center" />
+        </SearchProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

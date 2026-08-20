@@ -1,9 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Eye, EyeOff } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { useAuth } from "@/components/auth-provider";
 import { BrandMark } from "@/components/brand";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { getRemember, saveRemember } from "@/lib/auth";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -19,14 +23,52 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginPage() {
+  const { user, signIn } = useAuth();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [keepEmail, setKeepEmail] = useState(false);
+  const [keepPassword, setKeepPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
 
-  function submit(event: React.FormEvent) {
+  // Prefill from the values saved on this browser (client-only).
+  useEffect(() => {
+    const remembered = getRemember();
+    setKeepEmail(remembered.keepEmail);
+    setKeepPassword(remembered.keepPassword);
+    if (remembered.email) setEmail(remembered.email);
+    if (remembered.password) setPassword(remembered.password);
+  }, []);
+
+  useEffect(() => {
+    if (user) void navigate({ to: "/" });
+  }, [user, navigate]);
+
+  async function submit(event: React.FormEvent) {
     event.preventDefault();
-    toast("로그인은 아직 준비 중이에요.", {
-      description: "지금은 프론트엔드 화면만 구현된 단계입니다.",
-    });
+    setPending(true);
+    setError("");
+
+    const result = await signIn({ email, password });
+    setPending(false);
+
+    if (!result.ok) {
+      setError(result.message);
+      return;
+    }
+
+    saveRemember({ keepEmail, keepPassword, email, password });
+    toast.success(`${result.user.nickname}님, 다시 오셨네요!`);
+    void navigate({ to: "/" });
+  }
+
+  function toggleKeepEmail(next: boolean) {
+    setKeepEmail(next);
+    // Saving the password without the id makes no sense — drop both together.
+    if (!next) setKeepPassword(false);
   }
 
   return (
@@ -67,41 +109,93 @@ function LoginPage() {
             팬룸 활동, 좋아요, 저장한 글을 이어서 볼 수 있어요.
           </p>
 
-          <form onSubmit={submit} className="mt-7 space-y-4">
+          <form onSubmit={submit} className="mt-7 space-y-4" noValidate>
             <div>
-              <label htmlFor="email" className="text-[13px] font-bold">
+              <label htmlFor="login-email" className="text-[13px] font-bold">
                 이메일
               </label>
               <Input
-                id="email"
+                id="login-email"
                 type="email"
                 value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                  setError("");
+                }}
                 placeholder="pulse@example.com"
+                autoComplete="email"
                 className="mt-2 h-11"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="text-[13px] font-bold">
-                비밀번호
-              </label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="••••••••"
-                className="mt-2 h-11"
-                required
               />
             </div>
 
+            <div>
+              <label htmlFor="login-password" className="text-[13px] font-bold">
+                비밀번호
+              </label>
+              <div className="relative mt-2">
+                <Input
+                  id="login-password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(event) => {
+                    setPassword(event.target.value);
+                    setError("");
+                  }}
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                  className="h-11 pr-11"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={
+                    showPassword ? "비밀번호 가리기" : "비밀번호 보기"
+                  }
+                  className="absolute right-1.5 top-1.5 grid h-8 w-8 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
+              <label className="flex cursor-pointer items-center gap-2 text-[13px] font-semibold">
+                <Checkbox
+                  checked={keepEmail}
+                  onCheckedChange={(value) => toggleKeepEmail(value === true)}
+                />
+                아이디 저장
+              </label>
+              <label className="flex cursor-pointer items-center gap-2 text-[13px] font-semibold text-foreground/90">
+                <Checkbox
+                  checked={keepPassword}
+                  disabled={!keepEmail}
+                  onCheckedChange={(value) => setKeepPassword(value === true)}
+                />
+                <span
+                  className={keepEmail ? undefined : "text-muted-foreground"}
+                >
+                  비밀번호 저장
+                </span>
+              </label>
+            </div>
+
+            {error && (
+              <p className="rounded-xl bg-destructive/10 px-3.5 py-2.5 text-[13px] font-semibold text-destructive">
+                {error}
+              </p>
+            )}
+
             <button
               type="submit"
-              className="mt-2 w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
+              disabled={pending}
+              className="mt-2 w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-45"
             >
-              로그인
+              {pending ? "로그인 중…" : "로그인"}
             </button>
           </form>
 
@@ -111,7 +205,7 @@ function LoginPage() {
             <span className="h-px flex-1 bg-border" />
           </div>
 
-          <div className="grid gap-2">
+          <div className="grid grid-cols-1 gap-2">
             {["카카오로 계속하기", "구글로 계속하기"].map((label) => (
               <button
                 key={label}
@@ -126,9 +220,17 @@ function LoginPage() {
 
           <p className="mt-7 text-center text-[13px] text-muted-foreground">
             아직 계정이 없으신가요?{" "}
-            <Link to="/feed" className="font-bold text-primary hover:underline">
-              둘러보기부터 시작하기
+            <Link
+              to="/signup"
+              className="font-bold text-primary hover:underline"
+            >
+              회원가입
             </Link>
+          </p>
+
+          <p className="mt-6 rounded-xl bg-secondary/70 px-4 py-3 text-[12px] leading-relaxed text-muted-foreground">
+            저장한 아이디와 비밀번호는 이 브라우저에만 보관됩니다. 공용 PC에서는
+            저장을 꺼주세요.
           </p>
         </div>
       </div>

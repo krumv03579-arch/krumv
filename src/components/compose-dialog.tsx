@@ -1,7 +1,9 @@
+import { Link } from "@tanstack/react-router";
 import { PenLine } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { useAuth } from "@/components/auth-provider";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  artistByKey,
   artists,
   postCategories,
   type ArtistKey,
@@ -31,6 +34,7 @@ export function ComposeDialog({
 }: {
   onCreate: (post: Post) => void;
 }) {
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [artist, setArtist] = useState<ArtistKey>("lumi");
   const [category, setCategory] = useState<PostCategory>("자유");
@@ -56,8 +60,8 @@ export function ComposeDialog({
       title: title.trim(),
       excerpt: paragraphs[0] ?? "방금 작성한 글이에요.",
       body: paragraphs.length ? paragraphs : ["방금 작성한 글이에요."],
-      author: "나",
-      authorTag: "게스트",
+      author: user?.nickname ?? "나",
+      authorTag: artistByKey[artist].fandom,
       createdLabel: "방금 전",
       createdMinutes: 0,
       likes: 0,
@@ -74,13 +78,27 @@ export function ComposeDialog({
     setOpen(false);
   }
 
+  const triggerClass =
+    "inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90";
+
+  // Writing needs an account; send guests to the login screen instead.
+  if (!user) {
+    return (
+      <Link
+        to="/login"
+        className={triggerClass}
+        onClick={() => toast("글쓰기는 로그인 후 이용할 수 있어요.")}
+      >
+        <PenLine className="h-4 w-4" />
+        글쓰기
+      </Link>
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button
-          type="button"
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
-        >
+        <button type="button" className={triggerClass}>
           <PenLine className="h-4 w-4" />
           글쓰기
         </button>
