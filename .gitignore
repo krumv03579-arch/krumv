@@ -1,0 +1,14 @@
+node_modules
+dist
+.output
+.nitro
+.tanstack
+.vinxi
+.vercel
+.netlify
+*.local
+.DS_Store
+.env
+.env.*
+!.env.example
+.wrangler

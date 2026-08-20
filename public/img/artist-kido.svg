@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" width="480" height="480" role="img"><defs>
+    <linearGradient id="arg-757" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#ffb95e"/><stop offset="1" stop-color="#e2513c"/>
+    </linearGradient>
+    <linearGradient id="ars-757" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b0a1a" stop-opacity="0.82"/><stop offset="1" stop-color="#0b0a1a" stop-opacity="0.96"/>
+    </linearGradient>
+    <filter id="ar-757"><feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="3" seed="7"/><feColorMatrix type="saturate" values="0"/></filter></defs>
+    <rect width="480" height="480" fill="url(#arg-757)"/>
+    <circle cx="240" cy="201.6" r="144" fill="#fff" opacity="0.13"/>
+    <circle cx="254.13" cy="361.47" r="2" fill="#fff" opacity="0.46"/><circle cx="431.54" cy="245.35" r="3.74" fill="#fff" opacity="0.25"/><circle cx="290.46" cy="27" r="2.43" fill="#fff" opacity="0.24"/><circle cx="46.94" cy="157.85" r="4.48" fill="#fff" opacity="0.32"/><circle cx="309.83" cy="314.23" r="2.94" fill="#fff" opacity="0.56"/><circle cx="325.3" cy="231.6" r="4.18" fill="#fff" opacity="0.39"/><circle cx="423.6" cy="275.11" r="3.86" fill="#fff" opacity="0.3"/><circle cx="245.68" cy="168.55" r="2.06" fill="#fff" opacity="0.36"/><circle cx="287.2" cy="159.72" r="4.31" fill="#fff" opacity="0.24"/><circle cx="17.31" cy="164.12" r="1.85" fill="#fff" opacity="0.37"/><circle cx="349.82" cy="205.05" r="2.2" fill="#fff" opacity="0.24"/><circle cx="124.22" cy="188.05" r="3.66" fill="#fff" opacity="0.21"/><circle cx="374.04" cy="215.75" r="4.04" fill="#fff" opacity="0.2"/><circle cx="39.99" cy="57.07" r="2.01" fill="#fff" opacity="0.52"/><circle cx="25.57" cy="320.84" r="2.58" fill="#fff" opacity="0.53"/><circle cx="452.4" cy="299.7" r="4.36" fill="#fff" opacity="0.2"/>
+    <g fill="url(#ars-757)">
+      <circle cx="240" cy="201.6" r="81.60000000000001"/>
+      <path d="M240 288 c 81.60000000000001 0 134.4 57.599999999999994 144 192 L96 480 c 0.02 -134.4 62.400000000000006 -192 144 -192 Z"/>
+    </g>
+    <rect width="480" height="480" filter="url(#ar-757)" opacity="0.2" style="mix-blend-mode:overlay"/></svg>

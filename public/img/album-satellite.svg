@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" width="480" height="480" role="img"><defs>
+    <linearGradient id="alg-501" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b1d8f"/><stop offset="1" stop-color="#ff5f9e"/>
+    </linearGradient>
+    <radialGradient id="alv-501" cx="0.5" cy="0.4" r="0.75">
+      <stop offset="0.55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.34"/>
+    </radialGradient>
+    <filter id="al-501"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="3" seed="7"/><feColorMatrix type="saturate" values="0"/></filter></defs>
+    <rect width="480" height="480" fill="url(#alg-501)"/>
+    <ellipse cx="240" cy="240" rx="96" ry="163.2" fill="none" stroke="#ffe3f4" stroke-opacity="0.5" stroke-width="2" transform="rotate(-24 240 240)"/><ellipse cx="240" cy="240" rx="139.2" ry="148.8" fill="none" stroke="#ffe3f4" stroke-opacity="0.41" stroke-width="3" transform="rotate(-8 240 240)"/><ellipse cx="240" cy="240" rx="182.4" ry="134.4" fill="none" stroke="#ffe3f4" stroke-opacity="0.32" stroke-width="4" transform="rotate(8 240 240)"/><ellipse cx="240" cy="240" rx="225.6" ry="120" fill="none" stroke="#ffe3f4" stroke-opacity="0.23" stroke-width="5" transform="rotate(24 240 240)"/><circle cx="240" cy="240" r="52.8" fill="#ffe3f4" opacity="0.92"/>
+    <rect width="480" height="480" fill="url(#alv-501)"/>
+    <rect width="480" height="480" filter="url(#al-501)" opacity="0.24" style="mix-blend-mode:overlay"/></svg>
