@@ -42,10 +42,29 @@ export const emptyRemember: RememberState = {
   password: "",
 };
 
+/**
+ * localStorage is unavailable in some contexts (private mode, sandboxed
+ * previews). Fall back to memory there so sign-up and login still work for the
+ * session — the data just does not survive a reload.
+ */
+const memoryStore = new Map<string, string>();
+
+function storage() {
+  if (typeof window === "undefined") return null;
+  try {
+    const probe = "pulseroom:probe";
+    window.localStorage.setItem(probe, "1");
+    window.localStorage.removeItem(probe);
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
 function read<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
   try {
-    const raw = window.localStorage.getItem(key);
+    const raw = storage()?.getItem(key) ?? memoryStore.get(key) ?? null;
     return raw ? (JSON.parse(raw) as T) : fallback;
   } catch {
     return fallback;
@@ -54,17 +73,20 @@ function read<T>(key: string, fallback: T): T {
 
 function write(key: string, value: unknown) {
   if (typeof window === "undefined") return;
+  const raw = JSON.stringify(value);
+  memoryStore.set(key, raw);
   try {
-    window.localStorage.setItem(key, JSON.stringify(value));
+    storage()?.setItem(key, raw);
   } catch {
-    /* storage full or blocked — the app still works, it just won't persist */
+    /* storage full or blocked — the in-memory copy still serves this session */
   }
 }
 
 function remove(key: string) {
   if (typeof window === "undefined") return;
+  memoryStore.delete(key);
   try {
-    window.localStorage.removeItem(key);
+    storage()?.removeItem(key);
   } catch {
     /* ignore */
   }
