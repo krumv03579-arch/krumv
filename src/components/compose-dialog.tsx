@@ -3,6 +3,7 @@ import { PenLine } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { useActivity } from "@/components/activity-provider";
 import { useAuth } from "@/components/auth-provider";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,21 +21,17 @@ import {
   artists,
   postCategories,
   type ArtistKey,
-  type Post,
   type PostCategory,
 } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 /**
- * Front-end only composer: the new post is pushed into the page's local list so
- * the interaction is complete without a backend.
+ * Front-end only composer: the new post goes into the member's activity log, so
+ * it shows up in the feed and on their my-page without a backend.
  */
-export function ComposeDialog({
-  onCreate,
-}: {
-  onCreate: (post: Post) => void;
-}) {
+export function ComposeDialog() {
   const { user } = useAuth();
+  const { addPost } = useActivity();
   const [open, setOpen] = useState(false);
   const [artist, setArtist] = useState<ArtistKey>("lumi");
   const [category, setCategory] = useState<PostCategory>("자유");
@@ -53,7 +50,7 @@ export function ComposeDialog({
       .map((line) => line.trim())
       .filter(Boolean);
 
-    onCreate({
+    addPost({
       id: `local-${Date.now()}`,
       artist,
       category,

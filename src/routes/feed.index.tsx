@@ -2,12 +2,14 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Flame, TrendingUp } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import { useActivity } from "@/components/activity-provider";
 import { ComposeDialog } from "@/components/compose-dialog";
 import { LiveChartCard } from "@/components/home/live-chart";
 import { SchedulePanel } from "@/components/home/schedule-panel";
 import { PageHeader } from "@/components/page-header";
 import { Panel, PanelHeader } from "@/components/panel";
 import { PostRow } from "@/components/post-card";
+import { feedPosts } from "@/lib/activity";
 import { compact } from "@/lib/format";
 import {
   artists,
@@ -15,7 +17,6 @@ import {
   postCategories,
   posts as seedPosts,
   type ArtistKey,
-  type Post,
   type PostCategory,
 } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
@@ -42,7 +43,8 @@ const SORTS: { key: SortKey; label: string }[] = [
 ];
 
 function FeedPage() {
-  const [posts, setPosts] = useState<Post[]>(seedPosts);
+  const { activity } = useActivity();
+  const posts = useMemo(() => feedPosts(activity), [activity]);
   const [artist, setArtist] = useState<"all" | ArtistKey>("all");
   const [category, setCategory] = useState<"all" | PostCategory>("all");
   const [sort, setSort] = useState<SortKey>("latest");
@@ -72,11 +74,7 @@ function FeedPage() {
         eyebrow="Community"
         title="팬 커뮤니티 피드"
         description="응원하는 아티스트의 오늘을 기록하고, 다른 팬들의 이야기를 읽어보세요."
-        action={
-          <ComposeDialog
-            onCreate={(post) => setPosts((prev) => [post, ...prev])}
-          />
-        }
+        action={<ComposeDialog />}
       />
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_330px]">

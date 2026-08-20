@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Bell, LogOut, Menu, PenLine, Search, Users, X } from "lucide-react";
+import { Bell, ChevronRight, Menu, Search, X } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
 
 import { useAuth } from "@/components/auth-provider";
 import { AvatarBadge } from "@/components/avatar-badge";
@@ -46,13 +45,7 @@ const NOTIFICATIONS = [
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { open: openSearch } = useSearchDialog();
-  const { user, signOut } = useAuth();
-
-  function handleSignOut() {
-    signOut();
-    setMobileOpen(false);
-    toast.success("로그아웃했어요.");
-  }
+  const { user } = useAuth();
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur-xl">
@@ -130,55 +123,14 @@ export function SiteHeader() {
           </DropdownMenu>
 
           {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  className="hidden h-10 items-center gap-2 rounded-full bg-secondary pl-1.5 pr-3.5 text-sm font-bold transition-colors hover:bg-secondary/70 sm:inline-flex"
-                >
-                  <AvatarBadge name={user.nickname} size="sm" />
-                  <span className="max-w-[110px] truncate">
-                    {user.nickname}
-                  </span>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2">
-                <DropdownMenuLabel className="px-3 py-2">
-                  <span className="block text-[13px] font-bold text-foreground">
-                    {user.nickname}
-                  </span>
-                  <span className="mt-0.5 block truncate text-[11.5px] font-medium text-muted-foreground">
-                    {user.email}
-                  </span>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  asChild
-                  className="gap-2 rounded-xl px-3 py-2.5"
-                >
-                  <Link to="/feed">
-                    <PenLine className="h-4 w-4" />
-                    글쓰기
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  asChild
-                  className="gap-2 rounded-xl px-3 py-2.5"
-                >
-                  <Link to="/fanclub">
-                    <Users className="h-4 w-4" />내 팬룸
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onSelect={handleSignOut}
-                  className="gap-2 rounded-xl px-3 py-2.5 text-destructive focus:text-destructive"
-                >
-                  <LogOut className="h-4 w-4" />
-                  로그아웃
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Link
+              to="/me"
+              aria-label="마이페이지"
+              className="hidden h-10 items-center gap-2 rounded-full bg-secondary pl-1.5 pr-3.5 text-sm font-bold transition-colors hover:bg-secondary/70 sm:inline-flex"
+            >
+              <AvatarBadge name={user.nickname} size="sm" />
+              <span className="max-w-[110px] truncate">{user.nickname}</span>
+            </Link>
           ) : (
             <div className="hidden items-center gap-2 sm:flex">
               <Link
@@ -227,26 +179,22 @@ export function SiteHeader() {
               </Link>
             ))}
             {user ? (
-              <>
-                <div className="mt-1 flex items-center gap-2.5 rounded-xl bg-secondary px-3 py-2.5">
-                  <AvatarBadge name={user.nickname} size="sm" />
-                  <span className="min-w-0">
-                    <span className="block text-[14px] font-bold">
-                      {user.nickname}
-                    </span>
-                    <span className="block truncate text-[11.5px] text-muted-foreground">
-                      {user.email}
-                    </span>
+              <Link
+                to="/me"
+                onClick={() => setMobileOpen(false)}
+                className="mt-1 flex items-center gap-2.5 rounded-xl bg-secondary px-3 py-2.5"
+              >
+                <AvatarBadge name={user.nickname} size="sm" />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[14px] font-bold">
+                    {user.nickname}
                   </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleSignOut}
-                  className="rounded-xl border border-border px-3 py-2.5 text-[15px] font-bold text-destructive"
-                >
-                  로그아웃
-                </button>
-              </>
+                  <span className="block truncate text-[11.5px] text-muted-foreground">
+                    마이페이지 · 내 활동 보기
+                  </span>
+                </span>
+                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+              </Link>
             ) : (
               <>
                 <Link

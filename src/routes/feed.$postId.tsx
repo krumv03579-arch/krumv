@@ -10,13 +10,15 @@ import {
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
+import { useActivity } from "@/components/activity-provider";
 import { ArtistChip } from "@/components/artist-chip";
 import { useAuth } from "@/components/auth-provider";
 import { AvatarBadge } from "@/components/avatar-badge";
 import { Panel, PanelHeader } from "@/components/panel";
 import { PostTextCard } from "@/components/post-card";
 import { Textarea } from "@/components/ui/textarea";
-import { comma } from "@/lib/format";
+import { resolvePost } from "@/lib/activity";
+import { comma, relativeTime } from "@/lib/format";
 import {
   artistByKey,
   commentsByPost,
@@ -45,15 +47,39 @@ export const Route = createFileRoute("/feed/$postId")({
 
 function PostPage() {
   const { postId } = Route.useParams();
-  const post = postById[postId];
   const { user } = useAuth();
+  const {
+    activity,
+    addComment: recordComment,
+    toggleLike,
+    toggleSave,
+    isLiked,
+    isSaved,
+  } = useActivity();
 
-  const [liked, setLiked] = useState(false);
-  const [saved, setSaved] = useState(false);
+  // Seeded posts come from the mock feed; a member's own writing lives in their
+  // activity log.
+  const post = resolvePost(postId, activity);
+  const liked = isLiked(postId);
+  const saved = isSaved(postId);
   const [draft, setDraft] = useState("");
-  const [comments, setComments] = useState<Comment[]>(
-    () => commentsByPost[postId] ?? defaultComments,
-  );
+
+  // Base thread plus the comments this member has left on it.
+  const comments = useMemo<Comment[]>(() => {
+    const base =
+      commentsByPost[postId] ?? (postById[postId] ? defaultComments : []);
+    const mine = activity.comments
+      .filter((item) => item.postId === postId)
+      .map((item) => ({
+        id: item.id,
+        author: user?.nickname ?? "나",
+        authorTag: "팬룸 멤버",
+        createdLabel: relativeTime(item.createdAt),
+        body: item.body,
+        likes: 0,
+      }));
+    return [...base, ...mine];
+  }, [activity.comments, postId, user]);
 
   const related = useMemo(
     () =>
@@ -86,20 +112,14 @@ function PostPage() {
 
   const artist = artistByKey[post.artist];
 
-  function addComment(event: React.FormEvent) {
+  function submitComment(event: React.FormEvent) {
     event.preventDefault();
     if (!draft.trim()) return;
-    setComments((prev) => [
-      ...prev,
-      {
-        id: `local-${Date.now()}`,
-        author: user?.nickname ?? "나",
-        authorTag: "팬룸 멤버",
-        createdLabel: "방금 전",
-        body: draft.trim(),
-        likes: 0,
-      },
-    ]);
+    recordComment({
+      id: `local-${Date.now()}`,
+      postId,
+      body: draft.trim(),
+    });
     setDraft("");
     toast.success("댓글을 남겼어요.");
   }
@@ -164,7 +184,7 @@ function PostPage() {
             <div className="mt-8 flex flex-wrap items-center gap-2">
               <button
                 type="button"
-                onClick={() => setLiked((prev) => !prev)}
+                onClick={() => toggleLike(postId)}
                 className={cn(
                   "inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-bold transition-colors",
                   liked
@@ -181,7 +201,7 @@ function PostPage() {
               </span>
               <button
                 type="button"
-                onClick={() => setSaved((prev) => !prev)}
+                onClick={() => toggleSave(postId)}
                 className={cn(
                   "ml-auto grid h-11 w-11 place-items-center rounded-full border transition-colors",
                   saved
@@ -207,7 +227,7 @@ function PostPage() {
             <PanelHeader eyebrow="Comments" title={`댓글 ${comments.length}`} />
 
             {user ? (
-              <form onSubmit={addComment} className="mt-5">
+              <form onSubmit={submitComment} className="mt-5">
                 <div className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
                   <AvatarBadge name={user.nickname} size="sm" />
                   <span className="font-bold text-foreground">

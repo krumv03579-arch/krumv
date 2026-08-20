@@ -8,6 +8,8 @@
  * has to be able to fill it back in.
  */
 
+import { readJson, removeKey, writeJson } from "./browser-store";
+
 const USERS_KEY = "pulseroom:users:v1";
 const SESSION_KEY = "pulseroom:session:v1";
 const REMEMBER_KEY = "pulseroom:remember:v1";
@@ -42,56 +44,6 @@ export const emptyRemember: RememberState = {
   password: "",
 };
 
-/**
- * localStorage is unavailable in some contexts (private mode, sandboxed
- * previews). Fall back to memory there so sign-up and login still work for the
- * session — the data just does not survive a reload.
- */
-const memoryStore = new Map<string, string>();
-
-function storage() {
-  if (typeof window === "undefined") return null;
-  try {
-    const probe = "pulseroom:probe";
-    window.localStorage.setItem(probe, "1");
-    window.localStorage.removeItem(probe);
-    return window.localStorage;
-  } catch {
-    return null;
-  }
-}
-
-function read<T>(key: string, fallback: T): T {
-  if (typeof window === "undefined") return fallback;
-  try {
-    const raw = storage()?.getItem(key) ?? memoryStore.get(key) ?? null;
-    return raw ? (JSON.parse(raw) as T) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function write(key: string, value: unknown) {
-  if (typeof window === "undefined") return;
-  const raw = JSON.stringify(value);
-  memoryStore.set(key, raw);
-  try {
-    storage()?.setItem(key, raw);
-  } catch {
-    /* storage full or blocked — the in-memory copy still serves this session */
-  }
-}
-
-function remove(key: string) {
-  if (typeof window === "undefined") return;
-  memoryStore.delete(key);
-  try {
-    storage()?.removeItem(key);
-  } catch {
-    /* ignore */
-  }
-}
-
 export function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
 }
@@ -115,7 +67,7 @@ async function hashPassword(password: string, salt: string) {
 }
 
 export function listUsers(): StoredUser[] {
-  return read<StoredUser[]>(USERS_KEY, []);
+  return readJson<StoredUser[]>(USERS_KEY, []);
 }
 
 export function findUser(email: string) {
@@ -160,10 +112,10 @@ export async function signUp(input: {
     passwordHash: await hashPassword(input.password, salt),
     createdAt: new Date().toISOString(),
   };
-  write(USERS_KEY, [...listUsers(), user]);
+  writeJson(USERS_KEY, [...listUsers(), user]);
 
   const session = { email, nickname };
-  write(SESSION_KEY, session);
+  writeJson(SESSION_KEY, session);
   return { ok: true, user: session };
 }
 
@@ -179,22 +131,22 @@ export async function signIn(input: {
     return { ok: false, message: "비밀번호가 일치하지 않아요." };
 
   const session = { email: user.email, nickname: user.nickname };
-  write(SESSION_KEY, session);
+  writeJson(SESSION_KEY, session);
   return { ok: true, user: session };
 }
 
 export function getSession(): SessionUser | null {
-  return read<SessionUser | null>(SESSION_KEY, null);
+  return readJson<SessionUser | null>(SESSION_KEY, null);
 }
 
 export function clearSession() {
-  remove(SESSION_KEY);
+  removeKey(SESSION_KEY);
 }
 
 export function getRemember(): RememberState {
   return {
     ...emptyRemember,
-    ...read<Partial<RememberState>>(REMEMBER_KEY, {}),
+    ...readJson<Partial<RememberState>>(REMEMBER_KEY, {}),
   };
 }
 
@@ -206,10 +158,10 @@ export function saveRemember(state: RememberState) {
   const keepEmail = state.keepEmail;
   const keepPassword = keepEmail && state.keepPassword;
   if (!keepEmail && !keepPassword) {
-    remove(REMEMBER_KEY);
+    removeKey(REMEMBER_KEY);
     return;
   }
-  write(REMEMBER_KEY, {
+  writeJson(REMEMBER_KEY, {
     keepEmail,
     keepPassword,
     email: keepEmail ? state.email : "",

@@ -16,6 +16,7 @@ import { Route as FanclubRouteImport } from './routes/fanclub'
 import { Route as FeedRouteImport } from './routes/feed'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as MeRouteImport } from './routes/me'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -58,6 +59,11 @@ const LoginRoute = LoginRouteImport.update({
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeRoute = MeRouteImport.update({
+  id: '/me',
+  path: '/me',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -112,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/feed': typeof FeedRouteWithChildren
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/me': typeof MeRoute
   '/signup': typeof SignupRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -127,6 +134,7 @@ export interface FileRoutesByTo {
   '/fanclub': typeof FanclubRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/me': typeof MeRoute
   '/signup': typeof SignupRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -145,6 +153,7 @@ export interface FileRoutesById {
   '/feed': typeof FeedRouteWithChildren
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
+  '/me': typeof MeRoute
   '/signup': typeof SignupRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -164,6 +173,7 @@ export interface FileRouteTypes {
     | '/feed'
     | '/login'
     | '/mcp'
+    | '/me'
     | '/signup'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -179,6 +189,7 @@ export interface FileRouteTypes {
     | '/fanclub'
     | '/login'
     | '/mcp'
+    | '/me'
     | '/signup'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -196,6 +207,7 @@ export interface FileRouteTypes {
     | '/feed'
     | '/login'
     | '/mcp'
+    | '/me'
     | '/signup'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -214,6 +226,7 @@ export interface RootRouteChildren {
   FeedRoute: typeof FeedRouteWithChildren
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
+  MeRoute: typeof MeRoute
   SignupRoute: typeof SignupRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -269,6 +282,13 @@ declare module '@tanstack/react-router' {
       path: '/mcp'
       fullPath: '/mcp'
       preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me': {
+      id: '/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof MeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -363,6 +383,7 @@ const rootRouteChildren: RootRouteChildren = {
   FeedRoute: FeedRouteWithChildren,
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,
+  MeRoute: MeRoute,
   SignupRoute: SignupRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
