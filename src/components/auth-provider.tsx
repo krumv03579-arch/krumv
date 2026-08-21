@@ -8,11 +8,16 @@ import {
 } from "react";
 import type { ReactNode } from "react";
 
+import { clearActivity } from "@/lib/activity";
 import {
+  changePassword as changePasswordForUser,
   clearSession,
+  deleteAccount as deleteAccountForUser,
   getSession,
   signIn as signInUser,
   signUp as signUpUser,
+  updateNickname as updateNicknameForUser,
+  type ActionResult,
   type AuthResult,
   type SessionUser,
 } from "@/lib/auth";
@@ -28,6 +33,14 @@ type AuthContextValue = {
     nickname: string;
   }) => Promise<AuthResult>;
   signOut: () => void;
+  /** Renames the signed-in account and refreshes the session in place. */
+  updateNickname: (nickname: string) => AuthResult;
+  changePassword: (input: {
+    currentPassword: string;
+    nextPassword: string;
+  }) => Promise<ActionResult>;
+  /** Deletes the account together with its stored activity, then signs out. */
+  deleteAccount: (input: { password: string }) => Promise<ActionResult>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -78,9 +91,61 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const updateNickname = useCallback(
+    (nickname: string): AuthResult => {
+      if (!user) return { ok: false, message: "로그인이 필요해요." };
+      const result = updateNicknameForUser(user.email, nickname);
+      if (result.ok) setUser(result.user);
+      return result;
+    },
+    [user],
+  );
+
+  const changePassword = useCallback(
+    async (input: { currentPassword: string; nextPassword: string }) => {
+      if (!user) return { ok: false as const, message: "로그인이 필요해요." };
+      return changePasswordForUser({ email: user.email, ...input });
+    },
+    [user],
+  );
+
+  const deleteAccount = useCallback(
+    async (input: { password: string }) => {
+      if (!user) return { ok: false as const, message: "로그인이 필요해요." };
+      const result = await deleteAccountForUser({
+        email: user.email,
+        password: input.password,
+      });
+      if (result.ok) {
+        clearActivity(user.email);
+        setUser(null);
+      }
+      return result;
+    },
+    [user],
+  );
+
   const value = useMemo(
-    () => ({ user, ready, signIn, signUp, signOut }),
-    [user, ready, signIn, signUp, signOut],
+    () => ({
+      user,
+      ready,
+      signIn,
+      signUp,
+      signOut,
+      updateNickname,
+      changePassword,
+      deleteAccount,
+    }),
+    [
+      user,
+      ready,
+      signIn,
+      signUp,
+      signOut,
+      updateNickname,
+      changePassword,
+      deleteAccount,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

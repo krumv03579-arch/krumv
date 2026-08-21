@@ -8,7 +8,7 @@
  * seeded content.
  */
 
-import { readJson, writeJson } from "./browser-store";
+import { readJson, removeKey, writeJson } from "./browser-store";
 import { postById, posts as seedPosts, type Post } from "./mock-data";
 
 export type MyComment = {
@@ -47,6 +47,11 @@ export function readActivity(email: string): Activity {
 
 export function writeActivity(email: string, activity: Activity) {
   writeJson(key(email), activity);
+}
+
+/** Drops every trace of an account's history — used when the member leaves. */
+export function clearActivity(email: string) {
+  removeKey(key(email));
 }
 
 /** Resolves a post id against the seeded feed first, then the member's own posts. */
