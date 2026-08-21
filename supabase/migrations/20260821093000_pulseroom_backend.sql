@@ -328,6 +328,29 @@ $$;
 
 GRANT EXECUTE ON FUNCTION public.pulse_increment_views(uuid) TO anon, authenticated;
 
+-- --------------------------------------------------------- account removal ---
+-- The browser key may not touch auth.users, so leaving is done here. Posts,
+-- comments, reactions and the profile row follow through their foreign keys.
+
+CREATE OR REPLACE FUNCTION public.pulse_delete_account()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  uid uuid := auth.uid();
+BEGIN
+  IF uid IS NULL THEN
+    RAISE EXCEPTION 'not authenticated';
+  END IF;
+
+  DELETE FROM auth.users WHERE id = uid;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.pulse_delete_account() TO authenticated;
+
 -- --------------------------------------------------------------- realtime ---
 -- Lets the feed and the post page pick up other members' writing live.
 

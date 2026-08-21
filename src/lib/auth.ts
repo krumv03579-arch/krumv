@@ -241,3 +241,137 @@ export function saveRemember(state: RememberState) {
     password: keepPassword ? state.password : "",
   });
 }
+
+/* ------------------------------------------------------------------ */
+/* Account settings                                                    */
+/* ------------------------------------------------------------------ */
+
+export type ActionResult = { ok: true } | { ok: false; message: string };
+
+function actionFailed(message: string): ActionResult {
+  return { ok: false, message };
+}
+
+/**
+ * Confirms the member is who they say they are before a change that should not
+ * ride on a session alone. Supabase has no "verify password" call, so the
+ * password is checked by signing in again — the same account, so the session
+ * is refreshed rather than replaced.
+ */
+async function verifyPassword(
+  email: string,
+  password: string,
+): Promise<ActionResult> {
+  if (!password) return actionFailed("비밀번호를 입력해 주세요.");
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    return actionFailed(
+      error.message.toLowerCase().includes("invalid login credentials")
+        ? "비밀번호가 일치하지 않아요."
+        : describeAuthError(error),
+    );
+  }
+  return { ok: true };
+}
+
+/**
+ * Renames the signed-in account. The name is written to both the account
+ * metadata and the profile row, because posts by other members are rendered
+ * from the profile while the session reads the metadata copy.
+ */
+export async function updateNickname(nickname: string): Promise<AuthResult> {
+  const trimmed = nickname.trim();
+
+  if (!trimmed) return fail("닉네임을 입력해 주세요.");
+  if (trimmed.length > NICKNAME_MAX_LENGTH) {
+    return fail(`닉네임은 ${NICKNAME_MAX_LENGTH}자 이하로 입력해 주세요.`);
+  }
+
+  const { data: current } = await supabase.auth.getUser();
+  if (!current.user) return fail("로그인이 필요해요.");
+  if (nicknameOf(current.user) === trimmed) {
+    return fail("지금 쓰고 있는 닉네임이에요.");
+  }
+
+  const { data, error } = await supabase.auth.updateUser({
+    data: { nickname: trimmed, display_name: trimmed },
+  });
+  if (error) return fail(describeAuthError(error));
+  if (!data.user) return fail("닉네임을 바꾸지 못했어요.");
+
+  const { error: profileError } = await supabase
+    .from("profiles")
+    .update({ display_name: trimmed })
+    .eq("id", data.user.id);
+
+  // The metadata is already updated, so the member sees the new name either
+  // way; only other members' view of it lags until this succeeds.
+  if (profileError) {
+    console.error("[pulseroom] failed to update profile name", profileError);
+  }
+
+  return { ok: true, user: toSessionUser(data.user) };
+}
+
+export async function changePassword(input: {
+  email: string;
+  currentPassword: string;
+  nextPassword: string;
+}): Promise<ActionResult> {
+  if (input.nextPassword.length < PASSWORD_MIN_LENGTH) {
+    return actionFailed(
+      `새 비밀번호는 ${PASSWORD_MIN_LENGTH}자 이상 입력해 주세요.`,
+    );
+  }
+  if (input.nextPassword === input.currentPassword) {
+    return actionFailed("지금 쓰고 있는 비밀번호예요.");
+  }
+
+  const verified = await verifyPassword(input.email, input.currentPassword);
+  if (!verified.ok) return verified;
+
+  const { error } = await supabase.auth.updateUser({
+    password: input.nextPassword,
+  });
+  if (error) return actionFailed(describeAuthError(error));
+
+  // Keep "remember me" working for whoever saved this account's password.
+  const remember = getRemember();
+  if (
+    remember.keepPassword &&
+    normalizeEmail(remember.email) === normalizeEmail(input.email)
+  ) {
+    saveRemember({ ...remember, password: input.nextPassword });
+  }
+
+  return { ok: true };
+}
+
+/**
+ * Removes the account. The database function does the deleting, because the
+ * browser key may not touch auth.users; posts, comments, reactions and the
+ * profile row go with it through their foreign keys.
+ */
+export async function deleteAccount(input: {
+  email: string;
+  password: string;
+}): Promise<ActionResult> {
+  const verified = await verifyPassword(input.email, input.password);
+  if (!verified.ok) return verified;
+
+  const { error } = await supabase.rpc("pulse_delete_account");
+  if (error) {
+    console.error("[pulseroom] failed to delete account", error);
+    return actionFailed("탈퇴 처리에 실패했어요. 잠시 후 다시 시도해 주세요.");
+  }
+
+  await supabase.auth.signOut();
+
+  const remember = getRemember();
+  if (normalizeEmail(remember.email) === normalizeEmail(input.email)) {
+    removeKey(REMEMBER_KEY);
+  }
+
+  return { ok: true };
+}

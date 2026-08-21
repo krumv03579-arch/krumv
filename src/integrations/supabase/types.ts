@@ -532,6 +532,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      pulse_delete_account: { Args: never; Returns: undefined };
       pulse_increment_views: { Args: { _post_id: string }; Returns: undefined };
     };
     Enums: {

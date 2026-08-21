@@ -119,22 +119,39 @@ function MyPage() {
   return (
     <main className="mx-auto w-full max-w-[900px] px-4 pb-4 pt-6 sm:px-6">
       <Panel className="overflow-hidden">
-        <div className="h-24 bg-gradient-to-r from-[#4f7cff] via-[#7b6cff] to-[#ff6f91] sm:h-28" />
-        <div className="px-6 pb-6 sm:px-8">
-          <div className="-mt-10 flex flex-wrap items-end gap-4">
+        {/* The banner only ever sits behind the avatar — the name and email
+            start below it, so nothing reads as clipped on a narrow screen. */}
+        <div className="relative h-24 bg-gradient-to-r from-[#4f7cff] via-[#7b6cff] to-[#ff6f91] sm:h-28">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/15 to-transparent" />
+        </div>
+        {/* Positioned so the avatar paints over the banner, not under it. */}
+        <div className="relative px-5 pb-6 sm:px-8">
+          <div className="-mt-11 flex items-end justify-between gap-4">
             <AvatarBadge
               name={user.nickname}
               size="lg"
-              className="h-20 w-20 text-2xl ring-4 ring-card"
+              className="h-[88px] w-[88px] text-[30px] shadow-[var(--shadow-card)] ring-4 ring-card"
             />
-            <div className="min-w-0 flex-1 pb-1">
-              <h1 className="text-[24px] font-black leading-tight tracking-[-0.03em]">
-                {user.nickname}
-              </h1>
-              <p className="mt-1 truncate text-[13px] text-muted-foreground">
-                {user.email}
-                {joinedAt && <> · {joinedAt} 가입</>}
-              </p>
+            <Link
+              to="/account"
+              className="mb-1 inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-2 text-[12.5px] font-bold text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            >
+              <Settings className="h-3.5 w-3.5" />
+              계정 설정
+            </Link>
+          </div>
+
+          <div className="mt-4 min-w-0">
+            <h1 className="break-keep text-[24px] font-black leading-tight tracking-[-0.03em] sm:text-[26px]">
+              {user.nickname}
+            </h1>
+            <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted-foreground">
+              <span className="break-all">{user.email}</span>
+              {joinedAt && (
+                <span className="rounded-full bg-secondary px-2.5 py-1 text-[11.5px] font-semibold">
+                  {joinedAt} 가입
+                </span>
+              )}
             </div>
           </div>
 
@@ -267,7 +284,9 @@ function MyPage() {
             <dt className="text-[13.5px] font-semibold text-muted-foreground">
               이메일
             </dt>
-            <dd className="truncate text-[13.5px] font-bold">{user.email}</dd>
+            <dd className="break-all text-right text-[13.5px] font-bold">
+              {user.email}
+            </dd>
           </div>
           <div className="flex items-center justify-between gap-4 py-3.5">
             <dt className="text-[13.5px] font-semibold text-muted-foreground">
@@ -277,14 +296,23 @@ function MyPage() {
               {user.nickname}
             </dd>
           </div>
-          <div className="flex items-center justify-between gap-4 py-3.5">
-            <dt className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-muted-foreground">
+        </dl>
+
+        <Link
+          to="/account"
+          className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-border/70 bg-secondary/40 px-4 py-3.5 transition-colors hover:bg-secondary/70"
+        >
+          <span className="min-w-0">
+            <span className="flex items-center gap-1.5 text-[13.5px] font-bold">
               <Settings className="h-3.5 w-3.5" />
               계정 설정
-            </dt>
-            <dd className="text-[12.5px] text-muted-foreground">준비 중</dd>
-          </div>
-        </dl>
+            </span>
+            <span className="mt-0.5 block text-[12px] text-muted-foreground">
+              닉네임 변경 · 비밀번호 변경 · 회원 탈퇴
+            </span>
+          </span>
+          <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+        </Link>
 
         <button
           type="button"

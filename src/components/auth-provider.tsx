@@ -10,11 +10,15 @@ import type { ReactNode } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import {
+  changePassword as changePasswordForUser,
+  deleteAccount as deleteAccountForUser,
   signIn as signInUser,
   signOut as signOutUser,
   signUp as signUpUser,
   toSessionUser,
+  updateNickname as updateNicknameForUser,
   withProfileNickname,
+  type ActionResult,
   type AuthResult,
   type SessionUser,
 } from "@/lib/auth";
@@ -30,6 +34,14 @@ type AuthContextValue = {
     nickname: string;
   }) => Promise<AuthResult>;
   signOut: () => Promise<void>;
+  /** Renames the signed-in account and refreshes the session in place. */
+  updateNickname: (nickname: string) => Promise<AuthResult>;
+  changePassword: (input: {
+    currentPassword: string;
+    nextPassword: string;
+  }) => Promise<ActionResult>;
+  /** Deletes the account and everything it owns, then signs out. */
+  deleteAccount: (input: { password: string }) => Promise<ActionResult>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -105,9 +117,62 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const updateNickname = useCallback(
+    async (nickname: string): Promise<AuthResult> => {
+      if (!user) {
+        return { ok: false, message: "로그인이 필요해요.", kind: "error" };
+      }
+      const result = await updateNicknameForUser(nickname);
+      if (result.ok) setUser(result.user);
+      return result;
+    },
+    [user],
+  );
+
+  const changePassword = useCallback(
+    async (input: { currentPassword: string; nextPassword: string }) => {
+      if (!user) return { ok: false as const, message: "로그인이 필요해요." };
+      return changePasswordForUser({ email: user.email, ...input });
+    },
+    [user],
+  );
+
+  const deleteAccount = useCallback(
+    async (input: { password: string }) => {
+      if (!user) return { ok: false as const, message: "로그인이 필요해요." };
+      const result = await deleteAccountForUser({
+        email: user.email,
+        password: input.password,
+      });
+      // Posts, comments and reactions go with the account through their
+      // foreign keys, so there is no local history left to clear.
+      if (result.ok) setUser(null);
+      return result;
+    },
+    [user],
+  );
+
   const value = useMemo(
-    () => ({ user, ready, signIn, signUp, signOut }),
-    [user, ready, signIn, signUp, signOut],
+    () => ({
+      user,
+      ready,
+      signIn,
+      signUp,
+      signOut,
+      updateNickname,
+      changePassword,
+      deleteAccount,
+    }),
+    [
+      user,
+      ready,
+      signIn,
+      signUp,
+      signOut,
+      updateNickname,
+      changePassword,
+      deleteAccount,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
