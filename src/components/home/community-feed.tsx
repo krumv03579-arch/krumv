@@ -1,13 +1,22 @@
 import { Link } from "@tanstack/react-router";
 import { PenLine } from "lucide-react";
+import { useMemo } from "react";
 
+import { useActivity } from "@/components/activity-provider";
 import { Panel, PanelHeader } from "@/components/panel";
 import { PostCoverCard, PostTextCard } from "@/components/post-card";
-import { posts } from "@/lib/mock-data";
-
-const [lead, ...rest] = posts.filter((post) => !post.hot);
 
 export function CommunityFeed() {
+  const { posts } = useActivity();
+
+  // Newly written posts belong at the top; the "hot" ones have their own panel.
+  const [lead, ...rest] = useMemo(
+    () => posts.filter((post) => !post.hot),
+    [posts],
+  );
+
+  if (!lead) return null;
+
   return (
     <Panel className="p-5 sm:p-6">
       <PanelHeader

@@ -8,15 +8,16 @@ import {
 } from "react";
 import type { ReactNode } from "react";
 
-import { clearActivity } from "@/lib/activity";
+import { supabase } from "@/integrations/supabase/client";
 import {
   changePassword as changePasswordForUser,
-  clearSession,
   deleteAccount as deleteAccountForUser,
-  getSession,
   signIn as signInUser,
+  signOut as signOutUser,
   signUp as signUpUser,
+  toSessionUser,
   updateNickname as updateNicknameForUser,
+  withProfileNickname,
   type ActionResult,
   type AuthResult,
   type SessionUser,
@@ -24,7 +25,7 @@ import {
 
 type AuthContextValue = {
   user: SessionUser | null;
-  /** False until the stored session has been read on the client. */
+  /** False until Supabase has restored the stored session on the client. */
   ready: boolean;
   signIn: (input: { email: string; password: string }) => Promise<AuthResult>;
   signUp: (input: {
@@ -32,14 +33,14 @@ type AuthContextValue = {
     password: string;
     nickname: string;
   }) => Promise<AuthResult>;
-  signOut: () => void;
+  signOut: () => Promise<void>;
   /** Renames the signed-in account and refreshes the session in place. */
-  updateNickname: (nickname: string) => AuthResult;
+  updateNickname: (nickname: string) => Promise<AuthResult>;
   changePassword: (input: {
     currentPassword: string;
     nextPassword: string;
   }) => Promise<ActionResult>;
-  /** Deletes the account together with its stored activity, then signs out. */
+  /** Deletes the account and everything it owns, then signs out. */
   deleteAccount: (input: { password: string }) => Promise<ActionResult>;
 };
 
@@ -55,17 +56,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SessionUser | null>(null);
   const [ready, setReady] = useState(false);
 
-  // The session lives in localStorage, so it can only be read after mount —
-  // the server always renders the logged-out state.
+  // Supabase keeps the session in localStorage, so it can only be restored
+  // after mount — the server always renders the logged-out state. The listener
+  // also covers token refreshes, sign-outs and other tabs.
   useEffect(() => {
-    setUser(getSession());
-    setReady(true);
+    let active = true;
 
-    function sync(event: StorageEvent) {
-      if (event.key === "pulseroom:session:v1") setUser(getSession());
+    async function apply(next: SessionUser | null) {
+      if (!active) return;
+      setUser(next);
+      setReady(true);
+      if (!next) return;
+
+      const refined = await withProfileNickname(next);
+      if (active)
+        setUser((current) => (current?.id === next.id ? refined : current));
     }
-    window.addEventListener("storage", sync);
-    return () => window.removeEventListener("storage", sync);
+
+    void supabase.auth
+      .getSession()
+      .then(({ data }) =>
+        apply(data.session?.user ? toSessionUser(data.session.user) : null),
+      )
+      .catch(() => {
+        if (active) setReady(true);
+      });
+
+    const { data: subscription } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        void apply(session?.user ? toSessionUser(session.user) : null);
+      },
+    );
+
+    return () => {
+      active = false;
+      subscription.subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = useCallback(
@@ -86,15 +112,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [],
   );
 
-  const signOut = useCallback(() => {
-    clearSession();
+  const signOut = useCallback(async () => {
+    await signOutUser();
     setUser(null);
   }, []);
 
   const updateNickname = useCallback(
-    (nickname: string): AuthResult => {
-      if (!user) return { ok: false, message: "로그인이 필요해요." };
-      const result = updateNicknameForUser(user.email, nickname);
+    async (nickname: string): Promise<AuthResult> => {
+      if (!user) {
+        return { ok: false, message: "로그인이 필요해요.", kind: "error" };
+      }
+      const result = await updateNicknameForUser(nickname);
       if (result.ok) setUser(result.user);
       return result;
     },
@@ -116,10 +144,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email: user.email,
         password: input.password,
       });
-      if (result.ok) {
-        clearActivity(user.email);
-        setUser(null);
-      }
+      // Posts, comments and reactions go with the account through their
+      // foreign keys, so there is no local history left to clear.
+      if (result.ok) setUser(null);
       return result;
     },
     [user],

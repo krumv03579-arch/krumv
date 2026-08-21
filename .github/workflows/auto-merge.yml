@@ -1,0 +1,77 @@
+# Merges pull requests opened from a claude/* branch without waiting for a
+# review.
+#
+# Merge commits only: this repository syncs to Lovable, and squashing or
+# rebasing would rewrite history that Lovable has already published (see
+# AGENTS.md).
+#
+# The merge runs with GITHUB_TOKEN, so it deliberately does not trigger further
+# workflow runs. If CI is added to this repository later and it should gate the
+# merge, protect the base branch with a required check and swap `--merge` below
+# for `--merge --auto`, which waits for that check instead of merging at once.
+
+name: Auto-merge Claude branches
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: auto-merge-${{ github.event.pull_request.number }}
+  # Never cancel: a cancelled run could stop halfway through a merge.
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    # Same-repository claude/* branches only. A fork must never be able to merge
+    # itself into the base branch.
+    if: >-
+      startsWith(github.head_ref, 'claude/')
+      && github.event.pull_request.draft == false
+      && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge the pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          for attempt in $(seq 1 10); do
+            read -r state mergeable <<<"$(
+              gh pr view "$PR" --repo "$REPO" \
+                --json state,mergeable --jq '.state + " " + .mergeable'
+            )"
+
+            if [ "$state" != "OPEN" ]; then
+              echo "PR #$PR is $state — nothing to merge."
+              exit 0
+            fi
+
+            case "$mergeable" in
+              MERGEABLE)
+                gh pr merge "$PR" --repo "$REPO" --merge
+                echo "Merged PR #$PR."
+                exit 0
+                ;;
+              CONFLICTING)
+                echo "::error::PR #$PR conflicts with its base branch and has to be resolved by hand."
+                exit 1
+                ;;
+              *)
+                # GitHub works out mergeability asynchronously, so UNKNOWN right
+                # after a push only means "not decided yet".
+                echo "Mergeability still $mergeable (attempt $attempt/10), waiting…"
+                sleep 5
+                ;;
+            esac
+          done
+
+          echo "::error::GitHub never reported mergeability for PR #$PR."
+          exit 1

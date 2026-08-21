@@ -7,7 +7,7 @@ import {
   MessageCircle,
   Share2,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { useActivity } from "@/components/activity-provider";
@@ -17,14 +17,14 @@ import { AvatarBadge } from "@/components/avatar-badge";
 import { Panel, PanelHeader } from "@/components/panel";
 import { PostTextCard } from "@/components/post-card";
 import { Textarea } from "@/components/ui/textarea";
-import { resolvePost } from "@/lib/activity";
-import { comma, relativeTime } from "@/lib/format";
+import { countView, listComments } from "@/lib/api";
+import { displayLikes, resolvePost } from "@/lib/activity";
+import { comma } from "@/lib/format";
 import {
   artistByKey,
   commentsByPost,
   defaultComments,
   postById,
-  posts,
   type Comment,
 } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
@@ -48,38 +48,42 @@ export const Route = createFileRoute("/feed/$postId")({
 function PostPage() {
   const { postId } = Route.useParams();
   const { user } = useAuth();
-  const {
-    activity,
-    addComment: recordComment,
-    toggleLike,
-    toggleSave,
-    isLiked,
-    isSaved,
-  } = useActivity();
+  const { posts, ready, addComment, toggleLike, toggleSave, isLiked, isSaved } =
+    useActivity();
 
-  // Seeded posts come from the mock feed; a member's own writing lives in their
-  // activity log.
-  const post = resolvePost(postId, activity);
+  // The post is either a row loaded from Supabase or one of the seeded demo
+  // posts that still ship in the bundle.
+  const post = resolvePost(postId, posts);
   const liked = isLiked(postId);
   const saved = isSaved(postId);
   const [draft, setDraft] = useState("");
+  const [pending, setPending] = useState(false);
+  const [written, setWritten] = useState<Comment[]>([]);
 
-  // Base thread plus the comments this member has left on it.
+  const loadComments = useCallback(async () => {
+    try {
+      setWritten(await listComments(postId));
+    } catch (cause) {
+      console.error("[pulseroom] failed to load comments", cause);
+    }
+  }, [postId]);
+
+  useEffect(() => {
+    void loadComments();
+  }, [loadComments]);
+
+  // One read per visit. A failure here is invisible to the member, so it only
+  // needs to stay out of the way.
+  useEffect(() => {
+    void countView(postId).catch(() => {});
+  }, [postId]);
+
+  // The seeded thread, if this is a seeded post, plus everything members wrote.
   const comments = useMemo<Comment[]>(() => {
-    const base =
+    const seeded =
       commentsByPost[postId] ?? (postById[postId] ? defaultComments : []);
-    const mine = activity.comments
-      .filter((item) => item.postId === postId)
-      .map((item) => ({
-        id: item.id,
-        author: user?.nickname ?? "나",
-        authorTag: "팬룸 멤버",
-        createdLabel: relativeTime(item.createdAt),
-        body: item.body,
-        likes: 0,
-      }));
-    return [...base, ...mine];
-  }, [activity.comments, postId, user]);
+    return [...seeded, ...written];
+  }, [postId, written]);
 
   const related = useMemo(
     () =>
@@ -88,10 +92,19 @@ function PostPage() {
             .filter((p) => p.artist === post.artist && p.id !== post.id)
             .slice(0, 3)
         : [],
-    [post],
+    [post, posts],
   );
 
   if (!post) {
+    // The feed is still loading, so the post may simply not have arrived yet.
+    if (!ready) {
+      return (
+        <main className="mx-auto w-full max-w-3xl px-4 py-24 sm:px-6">
+          <div className="h-40 animate-pulse rounded-2xl bg-secondary" />
+        </main>
+      );
+    }
+
     return (
       <main className="mx-auto w-full max-w-3xl px-4 py-24 text-center sm:px-6">
         <h1 className="text-2xl font-extrabold tracking-[-0.02em]">
@@ -112,16 +125,19 @@ function PostPage() {
 
   const artist = artistByKey[post.artist];
 
-  function submitComment(event: React.FormEvent) {
+  async function submitComment(event: React.FormEvent) {
     event.preventDefault();
     if (!draft.trim()) return;
-    recordComment({
-      id: `local-${Date.now()}`,
-      postId,
-      body: draft.trim(),
-    });
-    setDraft("");
-    toast.success("댓글을 남겼어요.");
+
+    setPending(true);
+    const stored = await addComment({ postId, body: draft.trim() });
+    if (stored) {
+      setDraft("");
+      // Reload the thread so other members' comments arrive with it.
+      await loadComments();
+      toast.success("댓글을 남겼어요.");
+    }
+    setPending(false);
   }
 
   return (
@@ -193,7 +209,7 @@ function PostPage() {
                 )}
               >
                 <Heart className={cn("h-4 w-4", liked && "fill-current")} />
-                좋아요 {comma(post.likes + (liked ? 1 : 0))}
+                좋아요 {comma(displayLikes(post, liked))}
               </button>
               <span className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-bold text-muted-foreground">
                 <MessageCircle className="h-4 w-4" />
@@ -244,9 +260,10 @@ function PostPage() {
                 <div className="mt-3 flex justify-end">
                   <button
                     type="submit"
-                    className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
+                    disabled={pending}
+                    className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-45"
                   >
-                    댓글 등록
+                    {pending ? "등록 중…" : "댓글 등록"}
                   </button>
                 </div>
               </form>

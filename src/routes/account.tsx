@@ -26,7 +26,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
-import { findUser, NICKNAME_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/auth";
+import { NICKNAME_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 /** Typed into the leave dialog to confirm the account really should go. */
@@ -94,7 +94,7 @@ function AccountPage() {
       </div>
 
       <div className="mt-7 space-y-5">
-        <EmailCard email={user.email} />
+        <EmailCard email={user.email} createdAt={user.createdAt} />
         <NicknameCard />
         <PasswordCard />
 
@@ -119,18 +119,18 @@ function AccountPage() {
       </div>
 
       <p className="mt-6 rounded-2xl bg-secondary/70 px-4 py-3.5 text-[12px] leading-relaxed text-muted-foreground">
-        서버가 아직 없어 계정 정보는 이 브라우저에만 저장돼요. 탈퇴하면 저장된
-        계정과 활동 기록이 이 브라우저에서 완전히 지워지고 되돌릴 수 없어요.
+        계정 정보는 Supabase에 저장됩니다. 탈퇴하면 계정과 함께 작성한 글, 댓글,
+        좋아요·저장 기록이 서버에서 모두 지워지고 되돌릴 수 없어요.
       </p>
     </main>
   );
 }
 
-function EmailCard({ email }: { email: string }) {
-  const joinedAt = useMemo(() => {
-    const stored = findUser(email);
-    return stored ? stored.createdAt.slice(0, 10).replace(/-/g, ".") : null;
-  }, [email]);
+function EmailCard({ email, createdAt }: { email: string; createdAt: string }) {
+  const joinedAt = useMemo(
+    () => createdAt.slice(0, 10).replace(/-/g, "."),
+    [createdAt],
+  );
 
   return (
     <Panel className="p-5 sm:p-6">
@@ -152,15 +152,19 @@ function NicknameCard() {
   const { user, updateNickname } = useAuth();
   const [nickname, setNickname] = useState(user?.nickname ?? "");
   const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
 
   const trimmed = nickname.trim();
   const tooLong = trimmed.length > NICKNAME_MAX_LENGTH;
   const changed = trimmed !== user?.nickname;
-  const canSubmit = trimmed.length > 0 && !tooLong && changed;
+  const canSubmit = trimmed.length > 0 && !tooLong && changed && !pending;
 
-  function submit(event: React.FormEvent) {
+  async function submit(event: React.FormEvent) {
     event.preventDefault();
-    const result = updateNickname(nickname);
+    setPending(true);
+    const result = await updateNickname(nickname);
+    setPending(false);
+
     if (!result.ok) {
       setError(result.message);
       return;
@@ -200,7 +204,7 @@ function NicknameCard() {
             disabled={!canSubmit}
             className="h-11 shrink-0 rounded-xl bg-primary px-5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-45 sm:rounded-full"
           >
-            저장
+            {pending ? "저장 중…" : "저장"}
           </button>
         </div>
         <p
