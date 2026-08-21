@@ -33,6 +33,9 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
+  // Guards the persist effect below until the saved values have been read,
+  // so the first render never overwrites the store with empty strings.
+  const [restored, setRestored] = useState(false);
 
   // Prefill from the values saved on this browser (client-only).
   useEffect(() => {
@@ -41,7 +44,15 @@ function LoginPage() {
     setKeepPassword(remembered.keepPassword);
     if (remembered.email) setEmail(remembered.email);
     if (remembered.password) setPassword(remembered.password);
+    setRestored(true);
   }, []);
+
+  // Persist as soon as anything changes instead of only after a successful
+  // login: ticking a box then mistyping the password used to lose the choice.
+  useEffect(() => {
+    if (!restored) return;
+    saveRemember({ keepEmail, keepPassword, email, password });
+  }, [restored, keepEmail, keepPassword, email, password]);
 
   useEffect(() => {
     if (user) void navigate({ to: "/" });
@@ -63,12 +74,6 @@ function LoginPage() {
     saveRemember({ keepEmail, keepPassword, email, password });
     toast.success(`${result.user.nickname}님, 다시 오셨네요!`);
     void navigate({ to: "/" });
-  }
-
-  function toggleKeepEmail(next: boolean) {
-    setKeepEmail(next);
-    // Saving the password without the id makes no sense — drop both together.
-    if (!next) setKeepPassword(false);
   }
 
   return (
@@ -166,21 +171,16 @@ function LoginPage() {
               <label className="flex cursor-pointer items-center gap-2 text-[13px] font-semibold">
                 <Checkbox
                   checked={keepEmail}
-                  onCheckedChange={(value) => toggleKeepEmail(value === true)}
+                  onCheckedChange={(value) => setKeepEmail(value === true)}
                 />
                 아이디 저장
               </label>
-              <label className="flex cursor-pointer items-center gap-2 text-[13px] font-semibold text-foreground/90">
+              <label className="flex cursor-pointer items-center gap-2 text-[13px] font-semibold">
                 <Checkbox
                   checked={keepPassword}
-                  disabled={!keepEmail}
                   onCheckedChange={(value) => setKeepPassword(value === true)}
                 />
-                <span
-                  className={keepEmail ? undefined : "text-muted-foreground"}
-                >
-                  비밀번호 저장
-                </span>
+                비밀번호 저장
               </label>
             </div>
 

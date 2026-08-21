@@ -151,12 +151,12 @@ export function getRemember(): RememberState {
 }
 
 /**
- * Saves what the login form should prefill next time. The password is only
- * kept while both boxes are checked — unchecking either one wipes it.
+ * Saves what the login form should prefill next time. The two boxes are
+ * independent: either one can be checked on its own, and each one only
+ * controls its own field. Unchecking a box wipes just that value.
  */
 export function saveRemember(state: RememberState) {
-  const keepEmail = state.keepEmail;
-  const keepPassword = keepEmail && state.keepPassword;
+  const { keepEmail, keepPassword } = state;
   if (!keepEmail && !keepPassword) {
     removeKey(REMEMBER_KEY);
     return;
