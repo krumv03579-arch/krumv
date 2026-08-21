@@ -15,5 +15,6 @@
 - 한국어 문장 안에서는 **딜렉스타** ("딜렉스타는 데모 프로젝트입니다").
 - 로고, 페이지 제목, 도메인, 패키지 이름처럼 이름 자체가 들어가는 자리에는
   **deluxla** (소문자). 강조가 필요한 자리에서만 `DELUXLA`.
-- 로고는 `src/components/brand.tsx`의 `BrandWordmark` — 웹폰트 없이 같은 모양이
-  나오도록 직접 그린 SVG다. 글자를 텍스트로 바꿔 넣지 않는다.
+- 로고는 사용자가 준 원본 이미지 `public/img/logo-deluxla.png`다
+  (`src/components/brand.tsx`의 `BrandWordmark`). 글자를 폰트나 SVG로 다시
+  그리지 않는다 — 한 번 그렇게 했다가 모양이 어긋났다.
