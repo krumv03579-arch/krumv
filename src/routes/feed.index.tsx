@@ -9,7 +9,6 @@ import { SchedulePanel } from "@/components/home/schedule-panel";
 import { PageHeader } from "@/components/page-header";
 import { Panel, PanelHeader } from "@/components/panel";
 import { PostRow } from "@/components/post-card";
-import { feedPosts } from "@/lib/activity";
 import { compact } from "@/lib/format";
 import {
   artists,
@@ -43,8 +42,7 @@ const SORTS: { key: SortKey; label: string }[] = [
 ];
 
 function FeedPage() {
-  const { activity } = useActivity();
-  const posts = useMemo(() => feedPosts(activity), [activity]);
+  const { posts, ready, error } = useActivity();
   const [artist, setArtist] = useState<"all" | ArtistKey>("all");
   const [category, setCategory] = useState<"all" | PostCategory>("all");
   const [sort, setSort] = useState<SortKey>("latest");
@@ -138,13 +136,21 @@ function FeedPage() {
             </div>
           </Panel>
 
+          {error && (
+            <p className="rounded-2xl bg-destructive/10 px-5 py-3.5 text-[13px] font-semibold text-destructive">
+              {error}
+            </p>
+          )}
+
           <Panel className="px-5 py-1 sm:px-6">
             {visible.map((post) => (
               <PostRow key={post.id} post={post} />
             ))}
             {visible.length === 0 && (
               <p className="py-16 text-center text-sm text-muted-foreground">
-                조건에 맞는 글이 아직 없어요. 첫 이야기를 남겨보세요!
+                {ready
+                  ? "조건에 맞는 글이 아직 없어요. 첫 이야기를 남겨보세요!"
+                  : "이야기를 불러오는 중이에요…"}
               </p>
             )}
           </Panel>

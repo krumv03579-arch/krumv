@@ -57,6 +57,16 @@ function SignupPage() {
     setPending(false);
 
     if (!result.ok) {
+      // With email confirmation switched on there is no session yet — that is
+      // not a failure, so it goes to the login screen with a note instead of
+      // turning the form red.
+      if (result.kind === "notice") {
+        toast.success("가입 신청이 접수됐어요.", {
+          description: result.message,
+        });
+        void navigate({ to: "/login" });
+        return;
+      }
       setError(result.message);
       return;
     }
@@ -209,8 +219,8 @@ function SignupPage() {
           </p>
 
           <p className="mt-6 rounded-xl bg-secondary/70 px-4 py-3 text-[12px] leading-relaxed text-muted-foreground">
-            계정 정보는 서버가 아직 없어 이 브라우저에만 저장됩니다. 실제
-            비밀번호가 아닌 테스트용 비밀번호를 사용해 주세요.
+            계정은 Supabase 인증으로 안전하게 관리됩니다. 비밀번호는 서버에
+            해시로만 저장되며 pulseroom은 원문을 보관하지 않아요.
           </p>
         </div>
       </div>

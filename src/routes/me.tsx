@@ -8,7 +8,7 @@ import {
   PenLine,
   Settings,
 } from "lucide-react";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { toast } from "sonner";
 
 import { useActivity } from "@/components/activity-provider";
@@ -18,8 +18,7 @@ import { AvatarBadge } from "@/components/avatar-badge";
 import { Panel, PanelHeader } from "@/components/panel";
 import { PostRow } from "@/components/post-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { resolvePost, type MyReaction } from "@/lib/activity";
-import { findUser } from "@/lib/auth";
+import { resolvePost, type StoredReaction } from "@/lib/activity";
 import { comma, relativeTime } from "@/lib/format";
 import type { Post } from "@/lib/mock-data";
 
@@ -39,32 +38,35 @@ export const Route = createFileRoute("/me")({
 
 function MyPage() {
   const { user, ready: authReady, signOut } = useAuth();
-  const { activity, ready: activityReady } = useActivity();
+  const { posts, activity, ready: activityReady } = useActivity();
   const navigate = useNavigate();
 
-  const joinedAt = useMemo(() => {
-    if (!user) return null;
-    const stored = findUser(user.email);
-    return stored ? stored.createdAt.slice(0, 10).replace(/-/g, ".") : null;
-  }, [user]);
+  const joinedAt = useMemo(
+    () => (user ? user.createdAt.slice(0, 10).replace(/-/g, ".") : null),
+    [user],
+  );
+
+  const resolveReactions = useCallback(
+    (list: StoredReaction[]) =>
+      list
+        .map((item) => ({
+          post: resolvePost(item.postId, posts),
+          at: item.createdAt,
+        }))
+        .filter((item): item is { post: Post; at: number } =>
+          Boolean(item.post),
+        ),
+    [posts],
+  );
 
   const likedPosts = useMemo(
     () => resolveReactions(activity.likes),
-    [activity],
+    [activity.likes, resolveReactions],
   );
   const savedPosts = useMemo(
     () => resolveReactions(activity.saves),
-    [activity],
+    [activity.saves, resolveReactions],
   );
-
-  function resolveReactions(list: MyReaction[]) {
-    return list
-      .map((item) => ({
-        post: resolvePost(item.postId, activity),
-        at: item.createdAt,
-      }))
-      .filter((item): item is { post: Post; at: number } => Boolean(item.post));
-  }
 
   if (!authReady || !activityReady) {
     return (
@@ -108,8 +110,8 @@ function MyPage() {
     { label: "저장", value: savedPosts.length, icon: Bookmark },
   ];
 
-  function handleSignOut() {
-    signOut();
+  async function handleSignOut() {
+    await signOut();
     toast.success("로그아웃했어요.");
     void navigate({ to: "/" });
   }
@@ -184,7 +186,7 @@ function MyPage() {
             {activity.comments.length > 0 ? (
               <ul className="divide-y divide-border/70">
                 {activity.comments.map((comment) => {
-                  const post = resolvePost(comment.postId, activity);
+                  const post = resolvePost(comment.postId, posts);
                   return (
                     <li key={comment.id} className="py-5">
                       <p className="text-[14.5px] leading-relaxed text-foreground/90">
@@ -286,7 +288,7 @@ function MyPage() {
 
         <button
           type="button"
-          onClick={handleSignOut}
+          onClick={() => void handleSignOut()}
           className="mt-5 flex w-full items-center justify-center gap-2 rounded-full border border-border py-3 text-sm font-bold text-destructive transition-colors hover:border-destructive/30 hover:bg-destructive/5"
         >
           <LogOut className="h-4 w-4" />

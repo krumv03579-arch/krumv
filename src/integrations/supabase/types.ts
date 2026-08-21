@@ -272,6 +272,96 @@ export type Database = {
         };
         Relationships: [];
       };
+      pulse_comments: {
+        Row: {
+          body: string;
+          created_at: string;
+          id: string;
+          post_id: string;
+          user_id: string;
+        };
+        Insert: {
+          body: string;
+          created_at?: string;
+          id?: string;
+          post_id: string;
+          user_id: string;
+        };
+        Update: {
+          body?: string;
+          created_at?: string;
+          id?: string;
+          post_id?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      pulse_posts: {
+        Row: {
+          artist: string;
+          body: string;
+          category: string;
+          comments_count: number;
+          created_at: string;
+          id: string;
+          image_url: string | null;
+          likes_count: number;
+          title: string;
+          updated_at: string;
+          user_id: string;
+          views: number;
+        };
+        Insert: {
+          artist: string;
+          body?: string;
+          category: string;
+          comments_count?: number;
+          created_at?: string;
+          id?: string;
+          image_url?: string | null;
+          likes_count?: number;
+          title: string;
+          updated_at?: string;
+          user_id: string;
+          views?: number;
+        };
+        Update: {
+          artist?: string;
+          body?: string;
+          category?: string;
+          comments_count?: number;
+          created_at?: string;
+          id?: string;
+          image_url?: string | null;
+          likes_count?: number;
+          title?: string;
+          updated_at?: string;
+          user_id?: string;
+          views?: number;
+        };
+        Relationships: [];
+      };
+      pulse_reactions: {
+        Row: {
+          created_at: string;
+          kind: string;
+          post_id: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          kind: string;
+          post_id: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          kind?: string;
+          post_id?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       products: {
         Row: {
           condition: string;
@@ -442,6 +532,7 @@ export type Database = {
         };
         Returns: boolean;
       };
+      pulse_increment_views: { Args: { _post_id: string }; Returns: undefined };
     };
     Enums: {
       app_role: "admin" | "moderator" | "user";

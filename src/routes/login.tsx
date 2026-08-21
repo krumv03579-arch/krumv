@@ -229,8 +229,8 @@ function LoginPage() {
           </p>
 
           <p className="mt-6 rounded-xl bg-secondary/70 px-4 py-3 text-[12px] leading-relaxed text-muted-foreground">
-            저장한 아이디와 비밀번호는 이 브라우저에만 보관됩니다. 공용 PC에서는
-            저장을 꺼주세요.
+            로그인 정보는 Supabase에서 확인합니다. 아래에 저장한 아이디와
+            비밀번호는 이 브라우저에만 남으니 공용 PC에서는 저장을 꺼주세요.
           </p>
         </div>
       </div>

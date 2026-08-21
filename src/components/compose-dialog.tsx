@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { PenLine } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -17,7 +17,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  artistByKey,
   artists,
   postCategories,
   type ArtistKey,
@@ -25,54 +24,42 @@ import {
 } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
-/**
- * Front-end only composer: the new post goes into the member's activity log, so
- * it shows up in the feed and on their my-page without a backend.
- */
+/** Writes a new post to Supabase and opens it once it is saved. */
 export function ComposeDialog() {
   const { user } = useAuth();
   const { addPost } = useActivity();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [artist, setArtist] = useState<ArtistKey>("lumi");
   const [category, setCategory] = useState<PostCategory>("자유");
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [pending, setPending] = useState(false);
 
-  function submit(event: React.FormEvent) {
+  async function submit(event: React.FormEvent) {
     event.preventDefault();
     if (!title.trim()) {
       toast.error("제목을 입력해 주세요.");
       return;
     }
 
-    const paragraphs = body
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean);
-
-    addPost({
-      id: `local-${Date.now()}`,
+    setPending(true);
+    const post = await addPost({
       artist,
       category,
       title: title.trim(),
-      excerpt: paragraphs[0] ?? "방금 작성한 글이에요.",
-      body: paragraphs.length ? paragraphs : ["방금 작성한 글이에요."],
-      author: user?.nickname ?? "나",
-      authorTag: artistByKey[artist].fandom,
-      createdLabel: "방금 전",
-      createdMinutes: 0,
-      likes: 0,
-      comments: 0,
-      views: 1,
-      talking: 1,
+      body: body.trim(),
     });
+    setPending(false);
+    if (!post) return;
 
     toast.success("글이 등록됐어요.", {
-      description: "지금은 이 브라우저에만 저장됩니다.",
+      description: "이제 다른 팬들도 이 글을 볼 수 있어요.",
     });
     setTitle("");
     setBody("");
     setOpen(false);
+    void navigate({ to: "/feed/$postId", params: { postId: post.id } });
   }
 
   const triggerClass =
@@ -170,12 +157,17 @@ export function ComposeDialog() {
             <Button
               type="button"
               variant="ghost"
+              disabled={pending}
               onClick={() => setOpen(false)}
             >
               취소
             </Button>
-            <Button type="submit" className="rounded-full px-6 font-bold">
-              등록하기
+            <Button
+              type="submit"
+              disabled={pending}
+              className="rounded-full px-6 font-bold"
+            >
+              {pending ? "등록 중…" : "등록하기"}
             </Button>
           </div>
         </form>

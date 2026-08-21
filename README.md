@@ -3,8 +3,8 @@
 K-POP 팬 커뮤니티 웹앱. 좋아하는 아티스트의 소식, 팬들이 쓴 이야기, 실시간 뮤직차트를
 한 화면에서 볼 수 있는 서비스입니다.
 
-현재는 **프론트엔드 단계**입니다. 모든 화면은 `src/lib/mock-data.ts`의 가상 데이터로
-동작하며, 백엔드(로그인·글 저장·차트 집계)는 아직 연결되어 있지 않습니다.
+로그인, 글, 댓글, 좋아요·저장은 **Supabase**에 저장됩니다. 아티스트 프로필,
+뮤직차트, 일정, 팬룸은 아직 `src/lib/mock-data.ts`의 가상 데이터입니다.
 
 ## 화면
 
@@ -24,28 +24,59 @@ K-POP 팬 커뮤니티 웹앱. 좋아하는 아티스트의 소식, 팬들이 �
 
 ## 계정
 
-백엔드가 없는 단계라 계정은 브라우저(localStorage)에 저장됩니다 (`src/lib/auth.ts`).
+Supabase Auth(이메일 + 비밀번호)를 사용합니다 (`src/lib/auth.ts`).
 
-- 가입: 이메일, 비밀번호(6자 이상), 닉네임만 입력하면 바로 로그인됩니다.
+- 가입: 이메일, 비밀번호(6자 이상), 닉네임. 닉네임은 계정 메타데이터에 저장되고
+  DB 트리거가 `public.profiles.display_name`으로 복사합니다.
+- Supabase 프로젝트에서 이메일 인증(Confirm email)이 켜져 있으면 가입 직후에는
+  로그인되지 않고, 안내와 함께 로그인 화면으로 이동합니다. 바로 로그인되게 하려면
+  Authentication → Providers → Email에서 confirm email을 꺼주세요.
 - 로그인: `아이디 저장` / `비밀번호 저장` 체크 시 다음 방문에 입력값이 채워집니다.
-  (비밀번호 저장은 아이디 저장이 켜져 있을 때만 동작합니다.)
-- 계정 비밀번호는 솔트를 붙인 SHA-256 해시로 저장하고, 폼에 다시 채워야 하는
-  `비밀번호 저장` 값만 원문으로 보관합니다. 실제 비밀번호는 사용하지 마세요.
+  이 두 값만 이 브라우저에 남습니다(`pulseroom:remember:v1`).
 - 로그인 상태에서 글쓰기·댓글에 닉네임이 작성자로 표시됩니다.
 - 헤더 우측 프로필(아바타 + 닉네임)을 누르면 마이페이지로 이동합니다.
 
+## 백엔드 (Supabase)
+
+연결 정보는 `src/integrations/supabase/config.ts`에 들어 있어 클론 직후 바로
+동작합니다. 다른 프로젝트를 쓰려면 `.env`에 `VITE_SUPABASE_URL`,
+`VITE_SUPABASE_PUBLISHABLE_KEY`를 넣으면 이 값이 우선합니다 (`.env.example` 참고).
+게시 가능 키(publishable key)는 브라우저용이라 번들에 포함되며, 실제 방어선은
+RLS 정책입니다. 서비스 롤 키는 저장소에 두지 않습니다.
+
+### 스키마 적용
+
+`supabase/migrations/20260821093000_pulseroom_backend.sql`을 Supabase 대시보드의
+SQL Editor에 붙여넣고 실행하면 됩니다 (`supabase db push`도 동일). 여러 번 실행해도
+안전하게 작성돼 있습니다.
+
+| 테이블            | 내용                                                      |
+| ----------------- | --------------------------------------------------------- |
+| `profiles`        | 계정별 닉네임. 가입 시 트리거가 자동 생성                 |
+| `pulse_posts`     | 커뮤니티 글 (아티스트, 말머리, 본문, 좋아요/댓글/조회 수) |
+| `pulse_comments`  | 댓글                                                      |
+| `pulse_reactions` | 좋아요와 저장 (`kind` 컬럼으로 구분)                      |
+
+- 테이블 이름에 `pulse_` 접두사를 쓰는 이유는, 이 저장소의 마이그레이션 기록에
+  이전 Lovable 프로젝트의 `posts`/`comments`/`products` 스키마가 남아 있기 때문입니다.
+- 모든 테이블에 RLS가 켜져 있습니다. 읽기는 누구나, 쓰기는 본인 행만 가능합니다.
+- 좋아요/댓글 수는 트리거가 `pulse_posts`에 갱신합니다.
+- `pulse_comments.post_id`와 `pulse_reactions.post_id`가 `text`인 이유는, 피드가
+  DB 글(uuid)과 번들에 포함된 시드 글(슬러그)을 함께 보여주기 때문입니다.
+
 ## 활동 기록
 
-작성한 글, 댓글, 좋아요, 저장은 계정별로 브라우저에 쌓입니다 (`src/lib/activity.ts`,
-`pulseroom:activity:v1:<이메일>`). 마이페이지의 네 개 탭이 이 기록을 보여주고,
-직접 쓴 글은 피드와 글 상세에서도 시드 데이터와 똑같이 열립니다.
+작성한 글, 댓글, 좋아요, 저장은 계정에 묶여 Supabase에 저장되므로 브라우저를
+바꿔도 그대로 남습니다. 마이페이지의 네 개 탭이 이 기록을 보여줍니다.
 
-Supabase를 붙일 때는 `src/components/auth-provider.tsx`의 `signIn`/`signUp`/`signOut`
-구현만 교체하면 화면 쪽 코드는 그대로 사용할 수 있습니다.
+데이터 접근은 모두 `src/lib/api.ts`에 모여 있고, `src/components/activity-provider.tsx`가
+피드와 내 활동을 들고 있습니다. DB를 읽지 못하면 피드는 시드 데이터로 내려앉고
+안내 문구를 함께 보여줍니다.
 
 ## 기술 스택
 
 - TanStack Start (파일 기반 라우팅) + React 19
+- Supabase (Auth + Postgres, RLS)
 - Tailwind CSS v4 (디자인 토큰은 `src/styles.css`)
 - shadcn/ui 기반 컴포넌트 (`src/components/ui`)
 - lucide-react 아이콘, sonner 토스트
@@ -71,6 +102,6 @@ bun run lint     # eslint + prettier
 
 ## 다음 단계
 
-- Supabase 연동(인증, 게시글/댓글 저장, 팔로우·팬룸 가입)
+- 아티스트·팬룸·일정을 DB로 옮기고 팔로우·팬룸 가입 연결
 - 차트 집계 파이프라인
-- 이미지 업로드와 실제 아티스트 콘텐츠 연결
+- 이미지 업로드(Supabase Storage)와 실제 아티스트 콘텐츠 연결

@@ -1,33 +1,22 @@
 /**
- * Per-account activity log: what the signed-in member wrote, commented on,
- * liked and saved.
+ * Shapes and helpers for what a member has written and reacted to.
  *
- * Stored per email in the browser (see browser-store) so the my-page history
- * survives navigation and reloads while there is no backend. Posts are kept as
- * whole `Post` objects so a member's own writing is browsable exactly like the
- * seeded content.
+ * The rows themselves come from Supabase (see `api.ts`); this module only holds
+ * the types the screens share and the small pure helpers used to merge the
+ * database feed with the seeded demo content that still ships in the bundle.
  */
 
-import { readJson, writeJson } from "./browser-store";
+import { isDatabaseId, type StoredComment, type StoredReaction } from "./api";
 import { postById, posts as seedPosts, type Post } from "./mock-data";
 
-export type MyComment = {
-  id: string;
-  postId: string;
-  body: string;
-  createdAt: number;
-};
-
-export type MyReaction = {
-  postId: string;
-  createdAt: number;
-};
+export type { StoredComment, StoredReaction };
 
 export type Activity = {
+  /** Posts this member wrote. */
   posts: Post[];
-  comments: MyComment[];
-  likes: MyReaction[];
-  saves: MyReaction[];
+  comments: StoredComment[];
+  likes: StoredReaction[];
+  saves: StoredReaction[];
 };
 
 export const emptyActivity: Activity = {
@@ -37,33 +26,40 @@ export const emptyActivity: Activity = {
   saves: [],
 };
 
-function key(email: string) {
-  return `pulseroom:activity:v1:${email}`;
+/**
+ * The feed as members see it: everything written through the app, then the
+ * seeded posts the product still ships as demo content.
+ */
+export function feedPosts(databasePosts: Post[]): Post[] {
+  const ids = new Set(databasePosts.map((post) => post.id));
+  return [...databasePosts, ...seedPosts.filter((post) => !ids.has(post.id))];
 }
 
-export function readActivity(email: string): Activity {
-  return { ...emptyActivity, ...readJson<Partial<Activity>>(key(email), {}) };
+/** Resolves a post id against the loaded feed first, then the seeded content. */
+export function resolvePost(postId: string, feed: Post[]): Post | undefined {
+  return feed.find((post) => post.id === postId) ?? postById[postId];
 }
 
-export function writeActivity(email: string, activity: Activity) {
-  writeJson(key(email), activity);
+export function hasReacted(list: StoredReaction[], postId: string) {
+  return list.some((item) => item.postId === postId);
 }
 
-/** Resolves a post id against the seeded feed first, then the member's own posts. */
-export function resolvePost(
+/** Flips a reaction locally so the button responds before the write lands. */
+export function toggle(
+  list: StoredReaction[],
   postId: string,
-  activity: Activity,
-): Post | undefined {
-  return postById[postId] ?? activity.posts.find((post) => post.id === postId);
-}
-
-/** The feed as the member sees it: their own posts first, then the seeded ones. */
-export function feedPosts(activity: Activity): Post[] {
-  return [...activity.posts, ...seedPosts];
-}
-
-export function toggle(list: MyReaction[], postId: string): MyReaction[] {
-  return list.some((item) => item.postId === postId)
+): StoredReaction[] {
+  return hasReacted(list, postId)
     ? list.filter((item) => item.postId !== postId)
     : [{ postId, createdAt: Date.now() }, ...list];
+}
+
+/**
+ * What the like button should read. A post in the database already counts the
+ * member's own like, while a seeded post carries a fixed number, so theirs is
+ * added on top of it.
+ */
+export function displayLikes(post: Post, liked: boolean) {
+  if (isDatabaseId(post.id)) return post.likes;
+  return post.likes + (liked ? 1 : 0);
 }
