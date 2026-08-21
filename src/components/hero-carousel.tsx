@@ -35,7 +35,7 @@ export function HeroCarousel() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       aria-roledescription="carousel"
-      aria-label="pulseroom 주요 소식"
+      aria-label="딜렉스타 주요 소식"
     >
       {heroSlides.map((slide, i) => (
         <div

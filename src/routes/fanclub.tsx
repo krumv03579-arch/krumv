@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/fanclub")({
   head: () => ({
     meta: [
-      { title: "팬클럽 — pulseroom" },
+      { title: "팬클럽 — deluxla" },
       {
         name: "description",
         content: "취향이 맞는 팬룸에 들어가 함께 이야기해요.",

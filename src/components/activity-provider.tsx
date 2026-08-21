@@ -107,7 +107,7 @@ export function ActivityProvider({ children }: { children: ReactNode }) {
       setError(null);
     } catch (cause) {
       if (id !== loadId.current) return;
-      console.error("[pulseroom] failed to load community data", cause);
+      console.error("[deluxla] failed to load community data", cause);
       setDatabasePosts([]);
       setActivity(emptyActivity);
       setError(LOAD_FAILED);
@@ -141,7 +141,7 @@ export function ActivityProvider({ children }: { children: ReactNode }) {
         }));
         return post;
       } catch (cause) {
-        console.error("[pulseroom] failed to publish post", cause);
+        console.error("[deluxla] failed to publish post", cause);
         toast.error("글을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.");
         return null;
       }
@@ -171,7 +171,7 @@ export function ActivityProvider({ children }: { children: ReactNode }) {
         );
         return true;
       } catch (cause) {
-        console.error("[pulseroom] failed to publish comment", cause);
+        console.error("[deluxla] failed to publish comment", cause);
         toast.error("댓글을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.");
         return false;
       }
@@ -208,7 +208,7 @@ export function ActivityProvider({ children }: { children: ReactNode }) {
       }
 
       void setReaction({ userId: user.id, postId, kind, on }).catch((cause) => {
-        console.error("[pulseroom] failed to save reaction", cause);
+        console.error("[deluxla] failed to save reaction", cause);
         setActivity((previous) => ({
           ...previous,
           [field]: toggle(previous[field], postId),

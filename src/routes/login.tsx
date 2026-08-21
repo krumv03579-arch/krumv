@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/components/auth-provider";
-import { BrandMark } from "@/components/brand";
+import { BrandWordmark } from "@/components/brand";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { getRemember, saveRemember } from "@/lib/auth";
@@ -12,10 +12,10 @@ import { getRemember, saveRemember } from "@/lib/auth";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "로그인 — pulseroom" },
+      { title: "로그인 — deluxla" },
       {
         name: "description",
-        content: "pulseroom에 로그인하고 팬룸 활동을 이어가세요.",
+        content: "딜렉스타에 로그인하고 팬룸 활동을 이어가세요.",
       },
     ],
   }),
@@ -95,12 +95,7 @@ function LoginPage() {
         </div>
 
         <div className="p-8 sm:p-10">
-          <div className="flex items-center gap-2.5">
-            <BrandMark className="h-8 w-8" />
-            <span className="text-xl font-extrabold tracking-[-0.02em]">
-              pulseroom
-            </span>
-          </div>
+          <BrandWordmark className="h-[26px]" />
 
           <h1 className="mt-8 text-[26px] font-black tracking-[-0.03em]">
             로그인

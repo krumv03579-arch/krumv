@@ -11,7 +11,7 @@ const memory = new Map<string, string>();
 function storage() {
   if (typeof window === "undefined") return null;
   try {
-    const probe = "pulseroom:probe";
+    const probe = "deluxla:probe";
     window.localStorage.setItem(probe, "1");
     window.localStorage.removeItem(probe);
     return window.localStorage;

@@ -1,4 +1,4 @@
-/** Number/text formatting shared across pulseroom screens. */
+/** Number/text formatting shared across deluxla screens. */
 
 /** 3241 → "3.2k", 1284000 → "128.4만" — matches how counts read in the UI. */
 export function compact(n: number): string {

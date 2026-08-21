@@ -25,7 +25,7 @@ import type { Post } from "@/lib/mock-data";
 export const Route = createFileRoute("/me")({
   head: () => ({
     meta: [
-      { title: "마이페이지 — pulseroom" },
+      { title: "마이페이지 — deluxla" },
       {
         name: "description",
         content:

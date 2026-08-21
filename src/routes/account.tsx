@@ -35,7 +35,7 @@ const DELETE_PHRASE = "탈퇴합니다";
 export const Route = createFileRoute("/account")({
   head: () => ({
     meta: [
-      { title: "계정 설정 — pulseroom" },
+      { title: "계정 설정 — deluxla" },
       {
         name: "description",
         content: "닉네임과 비밀번호를 바꾸고, 필요하면 회원 탈퇴할 수 있어요.",
@@ -369,7 +369,7 @@ function DeleteAccountCard({
 
     setOpen(false);
     toast.success("탈퇴가 완료됐어요.", {
-      description: "그동안 pulseroom을 찾아주셔서 고마웠어요.",
+      description: "그동안 딜렉스타를 찾아주셔서 고마웠어요.",
     });
     void navigate({ to: "/" });
   }

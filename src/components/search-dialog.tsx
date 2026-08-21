@@ -58,7 +58,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
       {children}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-xl overflow-hidden rounded-2xl p-0">
-          <DialogTitle className="sr-only">pulseroom 검색</DialogTitle>
+          <DialogTitle className="sr-only">딜렉스타 검색</DialogTitle>
           <Command className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-extrabold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-widest [&_[cmdk-group-heading]]:text-muted-foreground">
             <CommandInput placeholder="아티스트, 앨범, 팬 이야기를 검색해 보세요" />
             <CommandList className="max-h-[420px]">

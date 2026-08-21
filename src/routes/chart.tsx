@@ -12,10 +12,10 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/chart")({
   head: () => ({
     meta: [
-      { title: "뮤직차트 — pulseroom" },
+      { title: "뮤직차트 — deluxla" },
       {
         name: "description",
-        content: "pulseroom 실시간 인기 음악 차트 TOP 10.",
+        content: "딜렉스타 실시간 인기 음악 차트 TOP 10.",
       },
     ],
   }),

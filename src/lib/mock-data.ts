@@ -1,5 +1,5 @@
 /**
- * pulseroom mock data.
+ * deluxla mock data.
  *
  * The product is at the front-end stage: every screen renders from this module
  * so the UI can be finished before any backend exists. All artists, releases
@@ -213,10 +213,10 @@ export type HeroSlide = {
 export const heroSlides: HeroSlide[] = [
   {
     id: "vol08",
-    eyebrow: "PULSEROOM ORIGINAL · VOL. 08",
+    eyebrow: "DELUXLA ORIGINAL · VOL. 08",
     titleTop: "밤을 닮은",
     titleBottom: "새로운 목소리",
-    subtitle: "PULSEROOM ORIGINAL · 아티스트 스토리",
+    subtitle: "DELUXLA ORIGINAL · 아티스트 스토리",
     cta: "이야기 보러가기",
     to: "/artists/lumi",
     image: "/img/hero-stage.svg",
