@@ -15,10 +15,13 @@ import { Route as ArtistsRouteImport } from './routes/artists'
 import { Route as ChartRouteImport } from './routes/chart'
 import { Route as FanclubRouteImport } from './routes/fanclub'
 import { Route as FeedRouteImport } from './routes/feed'
+import { Route as GuidelinesRouteImport } from './routes/guidelines'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MeRouteImport } from './routes/me'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as ArtistsIndexRouteImport } from './routes/artists.index'
@@ -57,6 +60,11 @@ const FeedRoute = FeedRouteImport.update({
   path: '/feed',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidelinesRoute = GuidelinesRouteImport.update({
+  id: '/guidelines',
+  path: '/guidelines',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -72,9 +80,19 @@ const MeRoute = MeRouteImport.update({
   path: '/me',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char91DotmcpChar93ListToolsRoute =
@@ -123,10 +141,13 @@ export interface FileRoutesByFullPath {
   '/chart': typeof ChartRoute
   '/fanclub': typeof FanclubRoute
   '/feed': typeof FeedRouteWithChildren
+  '/guidelines': typeof GuidelinesRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/me': typeof MeRoute
+  '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/artists/$artistId': typeof ArtistsArtistIdRoute
@@ -140,10 +161,13 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRoute
   '/chart': typeof ChartRoute
   '/fanclub': typeof FanclubRoute
+  '/guidelines': typeof GuidelinesRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/me': typeof MeRoute
+  '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/artists/$artistId': typeof ArtistsArtistIdRoute
@@ -160,10 +184,13 @@ export interface FileRoutesById {
   '/chart': typeof ChartRoute
   '/fanclub': typeof FanclubRoute
   '/feed': typeof FeedRouteWithChildren
+  '/guidelines': typeof GuidelinesRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/me': typeof MeRoute
+  '/privacy': typeof PrivacyRoute
   '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/artists/$artistId': typeof ArtistsArtistIdRoute
@@ -181,10 +208,13 @@ export interface FileRouteTypes {
     | '/chart'
     | '/fanclub'
     | '/feed'
+    | '/guidelines'
     | '/login'
     | '/mcp'
     | '/me'
+    | '/privacy'
     | '/signup'
+    | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/artists/$artistId'
@@ -198,10 +228,13 @@ export interface FileRouteTypes {
     | '/account'
     | '/chart'
     | '/fanclub'
+    | '/guidelines'
     | '/login'
     | '/mcp'
     | '/me'
+    | '/privacy'
     | '/signup'
+    | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/artists/$artistId'
@@ -217,10 +250,13 @@ export interface FileRouteTypes {
     | '/chart'
     | '/fanclub'
     | '/feed'
+    | '/guidelines'
     | '/login'
     | '/mcp'
     | '/me'
+    | '/privacy'
     | '/signup'
+    | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/artists/$artistId'
@@ -237,10 +273,13 @@ export interface RootRouteChildren {
   ChartRoute: typeof ChartRoute
   FanclubRoute: typeof FanclubRoute
   FeedRoute: typeof FeedRouteWithChildren
+  GuidelinesRoute: typeof GuidelinesRoute
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
   MeRoute: typeof MeRoute
+  PrivacyRoute: typeof PrivacyRoute
   SignupRoute: typeof SignupRoute
+  TermsRoute: typeof TermsRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -290,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guidelines': {
+      id: '/guidelines'
+      path: '/guidelines'
+      fullPath: '/guidelines'
+      preLoaderRoute: typeof GuidelinesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -311,11 +357,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.mcp/list-tools': {
@@ -402,10 +462,13 @@ const rootRouteChildren: RootRouteChildren = {
   ChartRoute: ChartRoute,
   FanclubRoute: FanclubRoute,
   FeedRoute: FeedRouteWithChildren,
+  GuidelinesRoute: GuidelinesRoute,
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,
   MeRoute: MeRoute,
+  PrivacyRoute: PrivacyRoute,
   SignupRoute: SignupRoute,
+  TermsRoute: TermsRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
