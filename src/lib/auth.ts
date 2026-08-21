@@ -168,3 +168,104 @@ export function saveRemember(state: RememberState) {
     password: keepPassword ? state.password : "",
   });
 }
+
+function writeUsers(users: StoredUser[]) {
+  writeJson(USERS_KEY, users);
+}
+
+function replaceUser(next: StoredUser) {
+  writeUsers(
+    listUsers().map((user) => (user.email === next.email ? next : user)),
+  );
+}
+
+export type ActionResult = { ok: true } | { ok: false; message: string };
+
+/**
+ * Renames the signed-in account. The session copy of the nickname is rewritten
+ * too, so the header and every byline pick the new name up right away.
+ */
+export function updateNickname(email: string, nickname: string): AuthResult {
+  const trimmed = nickname.trim();
+  const stored = findUser(email);
+  if (!stored) return { ok: false, message: "계정을 찾을 수 없어요." };
+  if (!trimmed) return { ok: false, message: "닉네임을 입력해 주세요." };
+  if (trimmed.length > NICKNAME_MAX_LENGTH) {
+    return {
+      ok: false,
+      message: `닉네임은 ${NICKNAME_MAX_LENGTH}자 이하로 입력해 주세요.`,
+    };
+  }
+  if (trimmed === stored.nickname)
+    return { ok: false, message: "지금 쓰고 있는 닉네임이에요." };
+
+  replaceUser({ ...stored, nickname: trimmed });
+
+  const session = { email: stored.email, nickname: trimmed };
+  writeJson(SESSION_KEY, session);
+  return { ok: true, user: session };
+}
+
+/**
+ * Swaps the stored password hash after checking the current one. A saved login
+ * password for this account is rewritten so "remember me" keeps working.
+ */
+export async function changePassword(input: {
+  email: string;
+  currentPassword: string;
+  nextPassword: string;
+}): Promise<ActionResult> {
+  const stored = findUser(input.email);
+  if (!stored) return { ok: false, message: "계정을 찾을 수 없어요." };
+
+  const currentHash = await hashPassword(input.currentPassword, stored.salt);
+  if (currentHash !== stored.passwordHash)
+    return { ok: false, message: "현재 비밀번호가 일치하지 않아요." };
+
+  if (input.nextPassword.length < PASSWORD_MIN_LENGTH) {
+    return {
+      ok: false,
+      message: `새 비밀번호는 ${PASSWORD_MIN_LENGTH}자 이상 입력해 주세요.`,
+    };
+  }
+  if (input.nextPassword === input.currentPassword)
+    return { ok: false, message: "지금 쓰고 있는 비밀번호예요." };
+
+  const salt = randomSalt();
+  replaceUser({
+    ...stored,
+    salt,
+    passwordHash: await hashPassword(input.nextPassword, salt),
+  });
+
+  const remember = getRemember();
+  if (remember.keepPassword && normalizeEmail(remember.email) === stored.email)
+    saveRemember({ ...remember, password: input.nextPassword });
+
+  return { ok: true };
+}
+
+/**
+ * Removes the account and everything tied to it in this browser: the stored
+ * user, the session and any saved login values. Activity is cleared separately
+ * by the caller, which owns that store.
+ */
+export async function deleteAccount(input: {
+  email: string;
+  password: string;
+}): Promise<ActionResult> {
+  const stored = findUser(input.email);
+  if (!stored) return { ok: false, message: "계정을 찾을 수 없어요." };
+
+  const hash = await hashPassword(input.password, stored.salt);
+  if (hash !== stored.passwordHash)
+    return { ok: false, message: "비밀번호가 일치하지 않아요." };
+
+  writeUsers(listUsers().filter((user) => user.email !== stored.email));
+  clearSession();
+
+  const remember = getRemember();
+  if (normalizeEmail(remember.email) === stored.email) removeKey(REMEMBER_KEY);
+
+  return { ok: true };
+}
