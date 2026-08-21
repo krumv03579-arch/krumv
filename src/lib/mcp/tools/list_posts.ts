@@ -4,7 +4,7 @@ import { z } from "zod";
 export default defineTool({
   name: "list_community_posts",
   title: "List community posts",
-  description: "List recent pulseroom community posts, most recent first.",
+  description: "List recent deluxla community posts, most recent first.",
   inputSchema: {
     limit: z
       .number()

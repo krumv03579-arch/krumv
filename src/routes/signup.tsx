@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/components/auth-provider";
-import { BrandMark } from "@/components/brand";
+import { BrandWordmark } from "@/components/brand";
 import { Input } from "@/components/ui/input";
 import {
   isValidEmail,
@@ -16,11 +16,11 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/signup")({
   head: () => ({
     meta: [
-      { title: "회원가입 — pulseroom" },
+      { title: "회원가입 — deluxla" },
       {
         name: "description",
         content:
-          "이메일, 비밀번호, 닉네임만 있으면 pulseroom 팬룸 활동을 시작할 수 있어요.",
+          "이메일, 비밀번호, 닉네임만 있으면 딜렉스타 팬룸 활동을 시작할 수 있어요.",
       },
     ],
   }),
@@ -88,7 +88,7 @@ function SignupPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#08071a]/90 via-[#08071a]/45 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-8 text-white">
-            <p className="eyebrow text-white/60">Join pulseroom</p>
+            <p className="eyebrow text-white/60">Join deluxla</p>
             <p className="mt-3 text-[26px] font-black leading-tight tracking-[-0.03em]">
               세 가지만 적으면
               <br />
@@ -101,12 +101,7 @@ function SignupPage() {
         </div>
 
         <div className="p-8 sm:p-10">
-          <div className="flex items-center gap-2.5">
-            <BrandMark className="h-8 w-8" />
-            <span className="text-xl font-extrabold tracking-[-0.02em]">
-              pulseroom
-            </span>
-          </div>
+          <BrandWordmark className="h-[26px]" />
 
           <h1 className="mt-8 text-[26px] font-black tracking-[-0.03em]">
             회원가입
@@ -220,7 +215,7 @@ function SignupPage() {
 
           <p className="mt-6 rounded-xl bg-secondary/70 px-4 py-3 text-[12px] leading-relaxed text-muted-foreground">
             계정은 Supabase 인증으로 안전하게 관리됩니다. 비밀번호는 서버에
-            해시로만 저장되며 pulseroom은 원문을 보관하지 않아요.
+            해시로만 저장되며 딜렉스타는 원문을 보관하지 않아요.
           </p>
         </div>
       </div>

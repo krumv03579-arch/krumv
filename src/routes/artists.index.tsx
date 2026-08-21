@@ -10,10 +10,10 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/artists/")({
   head: () => ({
     meta: [
-      { title: "아티스트 — pulseroom" },
+      { title: "아티스트 — deluxla" },
       {
         name: "description",
-        content: "pulseroom에서 활동 중인 아티스트와 팬룸을 만나보세요.",
+        content: "딜렉스타에서 활동 중인 아티스트와 팬룸을 만나보세요.",
       },
     ],
   }),

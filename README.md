@@ -1,4 +1,7 @@
-# pulseroom
+# deluxla
+
+한국어로는 **딜렉스타**, 표기·호스팅·서비스 이름은 **deluxla**로 씁니다. 한국어 문장
+안에서는 딜렉스타, 로고와 제목과 도메인처럼 이름 자체가 들어가는 자리에는 deluxla입니다.
 
 K-POP 팬 커뮤니티 웹앱. 좋아하는 아티스트의 소식, 팬들이 쓴 이야기, 실시간 뮤직차트를
 한 화면에서 볼 수 있는 서비스입니다.
@@ -32,7 +35,7 @@ Supabase Auth(이메일 + 비밀번호)를 사용합니다 (`src/lib/auth.ts`).
   로그인되지 않고, 안내와 함께 로그인 화면으로 이동합니다. 바로 로그인되게 하려면
   Authentication → Providers → Email에서 confirm email을 꺼주세요.
 - 로그인: `아이디 저장` / `비밀번호 저장` 체크 시 다음 방문에 입력값이 채워집니다.
-  이 두 값만 이 브라우저에 남습니다(`pulseroom:remember:v1`).
+  이 두 값만 이 브라우저에 남습니다(`deluxla:remember:v1`).
 - 로그인 상태에서 글쓰기·댓글에 닉네임이 작성자로 표시됩니다.
 - 헤더 우측 프로필(아바타 + 닉네임)을 누르면 마이페이지로 이동합니다.
 
@@ -46,7 +49,7 @@ RLS 정책입니다. 서비스 롤 키는 저장소에 두지 않습니다.
 
 ### 스키마 적용
 
-`supabase/migrations/20260821093000_pulseroom_backend.sql`을 Supabase 대시보드의
+`supabase/migrations/20260821093000_deluxla_backend.sql`을 Supabase 대시보드의
 SQL Editor에 붙여넣고 실행하면 됩니다 (`supabase db push`도 동일). 여러 번 실행해도
 안전하게 작성돼 있습니다.
 

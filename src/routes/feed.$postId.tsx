@@ -34,10 +34,10 @@ export const Route = createFileRoute("/feed/$postId")({
     const post = postById[params.postId];
     return {
       meta: [
-        { title: post ? `${post.title} — pulseroom` : "글 — pulseroom" },
+        { title: post ? `${post.title} — deluxla` : "글 — deluxla" },
         {
           name: "description",
-          content: post?.excerpt ?? "pulseroom 커뮤니티 글",
+          content: post?.excerpt ?? "딜렉스타 커뮤니티 글",
         },
       ],
     };
@@ -64,7 +64,7 @@ function PostPage() {
     try {
       setWritten(await listComments(postId));
     } catch (cause) {
-      console.error("[pulseroom] failed to load comments", cause);
+      console.error("[deluxla] failed to load comments", cause);
     }
   }, [postId]);
 

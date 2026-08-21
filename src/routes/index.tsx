@@ -14,7 +14,7 @@ import { WeekRoomCard } from "@/components/home/week-room";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "pulseroom — 아이돌 팬 커뮤니티" },
+      { title: "deluxla — 아이돌 팬 커뮤니티" },
       {
         name: "description",
         content:

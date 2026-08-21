@@ -18,7 +18,7 @@ import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 import { Toaster } from "../components/ui/sonner";
 
-const TITLE = "pulseroom — 아이돌 팬 커뮤니티";
+const TITLE = "deluxla — 아이돌 팬 커뮤니티";
 const DESCRIPTION =
   "좋아하는 아티스트의 오늘을 함께 기록하는 곳. 실시간 인기 이야기, 팬 커뮤니티, 뮤직차트를 한 화면에서.";
 

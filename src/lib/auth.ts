@@ -16,7 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 import { readJson, removeKey, writeJson } from "./browser-store";
 
-const REMEMBER_KEY = "pulseroom:remember:v1";
+const REMEMBER_KEY = "deluxla:remember:v1";
 
 export const PASSWORD_MIN_LENGTH = 6;
 export const NICKNAME_MAX_LENGTH = 12;
@@ -308,7 +308,7 @@ export async function updateNickname(nickname: string): Promise<AuthResult> {
   // The metadata is already updated, so the member sees the new name either
   // way; only other members' view of it lags until this succeeds.
   if (profileError) {
-    console.error("[pulseroom] failed to update profile name", profileError);
+    console.error("[deluxla] failed to update profile name", profileError);
   }
 
   return { ok: true, user: toSessionUser(data.user) };
@@ -362,7 +362,7 @@ export async function deleteAccount(input: {
 
   const { error } = await supabase.rpc("pulse_delete_account");
   if (error) {
-    console.error("[pulseroom] failed to delete account", error);
+    console.error("[deluxla] failed to delete account", error);
     return actionFailed("탈퇴 처리에 실패했어요. 잠시 후 다시 시도해 주세요.");
   }
 

@@ -1,5 +1,5 @@
 /**
- * Generates the K-pop themed artwork used across pulseroom.
+ * Generates the K-pop themed artwork used across deluxla.
  *
  * Everything ships as SVG in `public/img/` so the app never depends on an
  * external image host: stage/concert scenes for the hero + feed, abstract

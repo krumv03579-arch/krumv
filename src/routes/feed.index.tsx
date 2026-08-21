@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/feed/")({
   head: () => ({
     meta: [
-      { title: "피드 — pulseroom" },
+      { title: "피드 — deluxla" },
       {
         name: "description",
         content: "팬들이 남긴 오늘의 이야기를 아티스트별로 모아봤어요.",

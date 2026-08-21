@@ -7,15 +7,15 @@
   },
   "mcp": {
     "server": {
-      "name": "pulseroom-mcp",
+      "name": "deluxla-mcp",
       "version": "0.1.0",
-      "title": "pulseroom MCP"
+      "title": "deluxla MCP"
     },
     "tools": [
       {
         "name": "list_community_posts",
         "title": "List community posts",
-        "description": "List recent pulseroom community posts, most recent first.",
+        "description": "List recent deluxla community posts, most recent first.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,

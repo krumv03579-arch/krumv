@@ -24,11 +24,11 @@ export const Route = createFileRoute("/artists/$artistId")({
     return {
       meta: [
         {
-          title: artist ? `${artist.name} — pulseroom` : "아티스트 — pulseroom",
+          title: artist ? `${artist.name} — deluxla` : "아티스트 — deluxla",
         },
         {
           name: "description",
-          content: artist?.bio ?? "pulseroom 아티스트 페이지",
+          content: artist?.bio ?? "딜렉스타 아티스트 페이지",
         },
       ],
     };
