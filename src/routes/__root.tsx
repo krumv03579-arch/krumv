@@ -7,10 +7,9 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ActivityProvider } from "../components/activity-provider";
 import { AuthProvider } from "../components/auth-provider";
 import { SearchProvider } from "../components/search-dialog";
@@ -18,9 +17,9 @@ import { SiteFooter } from "../components/site-footer";
 import { SiteHeader } from "../components/site-header";
 import { Toaster } from "../components/ui/sonner";
 
-const TITLE = "pulseroom — 아이돌 팬 커뮤니티";
+const TITLE = "deluxta — 한국 쇼핑몰 해외 구매대행";
 const DESCRIPTION =
-  "좋아하는 아티스트의 오늘을 함께 기록하는 곳. 실시간 인기 이야기, 팬 커뮤니티, 뮤직차트를 한 화면에서.";
+  "한국 계좌 없이도 결제부터 구매, 웨어하우스 보관과 합배송까지 한 곳에서 해결하세요.";
 
 function NotFoundComponent() {
   return (
@@ -31,7 +30,8 @@ function NotFoundComponent() {
           찾으시는 페이지가 없어요
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          주소가 바뀌었거나 삭제된 글일 수 있어요. 홈에서 다시 시작해 보세요.
+          주소가 바뀌었거나 판매가 종료된 상품일 수 있어요. 홈에서 다시 시작해
+          보세요.
         </p>
         <Link
           to="/"
@@ -47,9 +47,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-4">
@@ -94,11 +91,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { property: "og:title", content: TITLE },
         { property: "og:description", content: DESCRIPTION },
         { property: "og:type", content: "website" },
-        { property: "og:image", content: "/img/hero-stage.svg" },
+        { property: "og:image", content: "/img/deluxta-logo.png" },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: TITLE },
         { name: "twitter:description", content: DESCRIPTION },
-        { name: "twitter:image", content: "/img/hero-stage.svg" },
+        { name: "twitter:image", content: "/img/deluxta-logo.png" },
       ],
       links: [
         { rel: "stylesheet", href: appCss },
