@@ -62,6 +62,16 @@ bun run build    # 프로덕션 빌드
 bun run lint     # eslint + prettier
 ```
 
+## 배포
+
+`vite.config.ts`가 nitro를 통해 두 가지 산출물을 만듭니다.
+
+- **Vercel** — 빌드 환경의 `VERCEL=1`을 보고 `vercel` 프리셋으로 전환해
+  `.vercel/output/`(Build Output API)을 생성합니다. Vercel 프로젝트에서 별도
+  설정 없이 `bun run build`만 실행하면 됩니다.
+- **그 외** — 기본 프리셋으로 `.output/`을 만듭니다. `node .output/server/index.mjs`
+  로 실행하고 `PORT`로 포트를 지정합니다.
+
 ## 다음 단계
 
 - 스토어 상품 크롤링/연동과 실제 상품 이미지
