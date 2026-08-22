@@ -21,9 +21,9 @@ const FAQ = [
   },
 ] as const;
 
+// TODO: 실제 고객센터 이메일·전화번호가 정해지면 채워 넣기.
 const CHANNELS = [
   { label: "이메일", value: "support@deluxta.com" },
-  { label: "전화", value: "+82-1544-3936" },
   { label: "운영시간", value: "10:00 AM ~ 6:00 PM (KST), 공휴일 제외" },
 ] as const;
 

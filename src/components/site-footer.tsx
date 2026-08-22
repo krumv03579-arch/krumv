@@ -2,13 +2,12 @@ import { Link } from "@tanstack/react-router";
 
 const COMPANY = {
   name: "Deluxta Inc.",
-  ceo: "Lee Kyoung Joo",
-  privacyOfficer: "Jung Jin Woo",
-  address: "2F, 238 Bucheon-ro, Wonmi-gu, Bucheon, Gyeonggi-do, Korea",
-  businessNumber: "117-81-91297",
-  mailOrderNumber: "2021-경기부천-1226",
-  phone: "+82-1544-3936",
-  email: "support@deluxta.com",
+  ceo: "김동준",
+  address: "서울특별시 금천구 가산디지털2로 98 롯데IT캐슬 2동 1107호 (H029)",
+  postalCode: "08506",
+  businessNumber: "475-04-03102",
+  mailOrderNumber: "2026-서울금천-1234",
+  patentCustomerNumber: "4-2024-031498-6",
 } as const;
 
 const GUIDE_LINKS = [
@@ -90,27 +89,21 @@ export function SiteFooter() {
 
             <dl className="mt-6 grid gap-y-5 text-[13px] sm:grid-cols-[auto_auto] sm:gap-x-10">
               <div>
-                <dt className="font-bold text-foreground">대표이사</dt>
+                <dt className="font-bold text-foreground">대표</dt>
                 <dd className="mt-1 text-muted-foreground">{COMPANY.ceo}</dd>
               </div>
               <div>
-                <dt className="font-bold text-foreground">
-                  개인정보보호책임자
-                </dt>
+                <dt className="font-bold text-foreground">사업자번호</dt>
                 <dd className="mt-1 text-muted-foreground">
-                  {COMPANY.privacyOfficer}
+                  {COMPANY.businessNumber}
                 </dd>
               </div>
               <div className="sm:col-span-2">
-                <dt className="font-bold text-foreground">회사 주소</dt>
+                <dt className="font-bold text-foreground">주소</dt>
                 <dd className="mt-1 text-muted-foreground">
                   {COMPANY.address}
-                </dd>
-              </div>
-              <div>
-                <dt className="font-bold text-foreground">사업자등록번호</dt>
-                <dd className="mt-1 text-muted-foreground">
-                  {COMPANY.businessNumber}
+                  <br />
+                  우편번호 {COMPANY.postalCode}
                 </dd>
               </div>
               <div>
@@ -119,6 +112,12 @@ export function SiteFooter() {
                 </dt>
                 <dd className="mt-1 text-muted-foreground">
                   {COMPANY.mailOrderNumber}
+                </dd>
+              </div>
+              <div>
+                <dt className="font-bold text-foreground">특허고객번호</dt>
+                <dd className="mt-1 text-muted-foreground">
+                  {COMPANY.patentCustomerNumber}
                 </dd>
               </div>
             </dl>
@@ -183,20 +182,6 @@ export function SiteFooter() {
                   {link.label}
                 </Link>
               ))}
-            </div>
-            <div className="ml-auto flex flex-wrap items-center gap-x-6 gap-y-2">
-              <a
-                href={`tel:${COMPANY.phone}`}
-                className="hover:text-foreground"
-              >
-                {COMPANY.phone}
-              </a>
-              <a
-                href={`mailto:${COMPANY.email}`}
-                className="hover:text-foreground"
-              >
-                {COMPANY.email}
-              </a>
             </div>
           </div>
         </div>
