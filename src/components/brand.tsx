@@ -2,7 +2,9 @@ import { Link } from "@tanstack/react-router";
 
 import { cn } from "@/lib/utils";
 
-/** The pulseroom sparkle mark — inline so it inherits crisp rendering at any size. */
+/**
+ * The deluxta mark — a parcel in motion, inline so it stays crisp at any size.
+ */
 export function BrandMark({ className }: { className?: string }) {
   return (
     <svg
@@ -11,40 +13,38 @@ export function BrandMark({ className }: { className?: string }) {
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id="pr-mark" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#ff6f91" />
-          <stop offset="0.55" stopColor="#ff4d6d" />
-          <stop offset="1" stopColor="#7c4dff" />
+        <linearGradient id="dx-mark" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#5b7bff" />
+          <stop offset="1" stopColor="#2f45d8" />
         </linearGradient>
       </defs>
-      <rect width="64" height="64" rx="18" fill="url(#pr-mark)" />
+      <rect width="64" height="64" rx="18" fill="url(#dx-mark)" />
       <path
-        d="M32 13.5c1.4 6.6 4.4 9.6 11 11-6.6 1.4-9.6 4.4-11 11-1.4-6.6-4.4-9.6-11-11 6.6-1.4 9.6-4.4 11-11Z"
+        d="M20 22h16a10 10 0 0 1 0 20H24v-8h12a2 2 0 0 0 0-4H20a6 6 0 0 1 0-8Z"
         fill="#fff"
       />
-      <path
-        d="M20.5 38.5c.8 3.6 2.4 5.2 6 6-3.6.8-5.2 2.4-6 6-.8-3.6-2.4-5.2-6-6 3.6-.8 5.2-2.4 6-6Z"
-        fill="#fff"
-        fillOpacity="0.85"
-      />
+      <circle cx="43" cy="24" r="4.5" fill="#9fe8d5" />
     </svg>
   );
 }
 
+/** Wordmark lockup used in the header and footer. */
 export function BrandLogo({ className }: { className?: string }) {
   return (
     <Link
       to="/"
-      aria-label="pulseroom 홈"
+      aria-label="deluxta 홈"
       className={cn(
         "flex items-center gap-2.5 transition-opacity hover:opacity-80",
         className,
       )}
     >
-      <BrandMark />
-      <span className="text-[22px] font-extrabold leading-none tracking-[-0.02em] text-foreground">
-        pulseroom
-      </span>
+      <BrandMark className="h-9 w-9" />
+      <img
+        src="/img/deluxta-logo.png"
+        alt="deluxta"
+        className="h-[22px] w-auto dark:invert"
+      />
     </Link>
   );
 }

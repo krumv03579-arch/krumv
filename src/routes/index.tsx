@@ -1,24 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { HeroCarousel } from "@/components/hero-carousel";
-import { CommunityFeed } from "@/components/home/community-feed";
-import { LiveChartCard } from "@/components/home/live-chart";
-import { LivePickCard } from "@/components/home/live-pick";
-import { PulsePickCard } from "@/components/home/pulse-pick";
-import { SchedulePanel } from "@/components/home/schedule-panel";
-import { SearchPanel } from "@/components/home/search-panel";
-import { TasteCard } from "@/components/home/taste-card";
-import { TrendingPanel } from "@/components/home/trending-panel";
-import { WeekRoomCard } from "@/components/home/week-room";
+import { HeroBanner } from "@/components/shop/hero-banner";
+import { ServiceCards } from "@/components/shop/service-cards";
+import { StoreRail } from "@/components/shop/store-rail";
+import { StoreSection } from "@/components/shop/store-section";
+import { stores } from "@/lib/shop-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "pulseroom — 아이돌 팬 커뮤니티" },
+      { title: "deluxta — 한국 쇼핑몰 해외 구매대행" },
       {
         name: "description",
         content:
-          "좋아하는 아티스트의 오늘을 함께 기록하는 곳. 실시간 인기 이야기, 팬 커뮤니티, 뮤직차트를 한 화면에서 만나보세요.",
+          "한국 계좌 없이도 결제부터 구매, 웨어하우스 보관과 합배송까지 한 곳에서. 올리브영·번개장터·팬즈샵·케이타운포유·예스24를 그대로 쇼핑하세요.",
       },
     ],
   }),
@@ -27,32 +22,18 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   return (
-    <main className="mx-auto w-full max-w-[1460px] px-4 pb-4 pt-5 sm:px-6">
-      <HeroCarousel />
+    <main className="mx-auto w-full max-w-[1460px] px-4 pb-8 pt-6 sm:px-6">
+      <StoreRail />
 
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_330px] xl:grid-cols-[290px_minmax(0,1fr)_330px]">
-        {/* Promo rail — a dedicated left column only once there is room for three. */}
-        <aside className="hidden flex-col gap-5 xl:flex">
-          <PulsePickCard />
-          <LivePickCard />
-        </aside>
+      <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(320px,530px)]">
+        <HeroBanner />
+        <ServiceCards />
+      </div>
 
-        <div className="flex flex-col gap-6">
-          <SearchPanel />
-          <TrendingPanel />
-          <CommunityFeed />
-        </div>
-
-        <aside className="flex flex-col gap-5">
-          <TasteCard />
-          <LiveChartCard />
-          <WeekRoomCard />
-          <SchedulePanel />
-          <div className="flex flex-col gap-5 xl:hidden">
-            <PulsePickCard />
-            <LivePickCard />
-          </div>
-        </aside>
+      <div className="mt-12 flex flex-col gap-12">
+        {stores.map((store) => (
+          <StoreSection key={store.key} store={store} />
+        ))}
       </div>
     </main>
   );

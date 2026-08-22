@@ -9,61 +9,40 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ArtistsRouteImport } from './routes/artists'
-import { Route as ChartRouteImport } from './routes/chart'
-import { Route as FanclubRouteImport } from './routes/fanclub'
-import { Route as FeedRouteImport } from './routes/feed'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as McpRouteImport } from './routes/mcp'
-import { Route as MeRouteImport } from './routes/me'
+import { Route as WarehouseRouteImport } from './routes/warehouse'
+import { Route as SupportRouteImport } from './routes/support'
+import { Route as StoreRouteImport } from './routes/store'
 import { Route as SignupRouteImport } from './routes/signup'
-import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
-import { Route as ArtistsIndexRouteImport } from './routes/artists.index'
-import { Route as ArtistsArtistIdRouteImport } from './routes/artists.$artistId'
+import { Route as ServiceRouteImport } from './routes/service'
+import { Route as MeRouteImport } from './routes/me'
+import { Route as McpRouteImport } from './routes/mcp'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as FeedRouteImport } from './routes/feed'
+import { Route as FanclubRouteImport } from './routes/fanclub'
+import { Route as ChartRouteImport } from './routes/chart'
+import { Route as ArtistsRouteImport } from './routes/artists'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as FeedIndexRouteImport } from './routes/feed.index'
+import { Route as ArtistsIndexRouteImport } from './routes/artists.index'
 import { Route as FeedPostIdRouteImport } from './routes/feed.$postId'
+import { Route as ArtistsArtistIdRouteImport } from './routes/artists.$artistId'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const WarehouseRoute = WarehouseRouteImport.update({
+  id: '/warehouse',
+  path: '/warehouse',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ArtistsRoute = ArtistsRouteImport.update({
-  id: '/artists',
-  path: '/artists',
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ChartRoute = ChartRouteImport.update({
-  id: '/chart',
-  path: '/chart',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FanclubRoute = FanclubRouteImport.update({
-  id: '/fanclub',
-  path: '/fanclub',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FeedRoute = FeedRouteImport.update({
-  id: '/feed',
-  path: '/feed',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MeRoute = MeRouteImport.update({
-  id: '/me',
-  path: '/me',
+const StoreRoute = StoreRouteImport.update({
+  id: '/store',
+  path: '/store',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -71,38 +50,83 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ArtistsIndexRoute = ArtistsIndexRouteImport.update({
+const ServiceRoute = ServiceRouteImport.update({
+  id: '/service',
+  path: '/service',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeRoute = MeRouteImport.update({
+  id: '/me',
+  path: '/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedRoute = FeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FanclubRoute = FanclubRouteImport.update({
+  id: '/fanclub',
+  path: '/fanclub',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChartRoute = ChartRouteImport.update({
+  id: '/chart',
+  path: '/chart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArtistsRoute = ArtistsRouteImport.update({
+  id: '/artists',
+  path: '/artists',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => ArtistsRoute,
-} as any)
-const ArtistsArtistIdRoute = ArtistsArtistIdRouteImport.update({
-  id: '/$artistId',
-  path: '/$artistId',
-  getParentRoute: () => ArtistsRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 const FeedIndexRoute = FeedIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => FeedRoute,
 } as any)
+const ArtistsIndexRoute = ArtistsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ArtistsRoute,
+} as any)
 const FeedPostIdRoute = FeedPostIdRouteImport.update({
   id: '/$postId',
   path: '/$postId',
   getParentRoute: () => FeedRoute,
 } as any)
+const ArtistsArtistIdRoute = ArtistsArtistIdRouteImport.update({
+  id: '/$artistId',
+  path: '/$artistId',
+  getParentRoute: () => ArtistsRoute,
+} as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -119,7 +143,11 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/me': typeof MeRoute
+  '/service': typeof ServiceRoute
   '/signup': typeof SignupRoute
+  '/store': typeof StoreRoute
+  '/support': typeof SupportRoute
+  '/warehouse': typeof WarehouseRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/artists/$artistId': typeof ArtistsArtistIdRoute
@@ -135,7 +163,11 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/me': typeof MeRoute
+  '/service': typeof ServiceRoute
   '/signup': typeof SignupRoute
+  '/store': typeof StoreRoute
+  '/support': typeof SupportRoute
+  '/warehouse': typeof WarehouseRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/artists/$artistId': typeof ArtistsArtistIdRoute
@@ -154,7 +186,11 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/me': typeof MeRoute
+  '/service': typeof ServiceRoute
   '/signup': typeof SignupRoute
+  '/store': typeof StoreRoute
+  '/support': typeof SupportRoute
+  '/warehouse': typeof WarehouseRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/artists/$artistId': typeof ArtistsArtistIdRoute
@@ -174,7 +210,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/mcp'
     | '/me'
+    | '/service'
     | '/signup'
+    | '/store'
+    | '/support'
+    | '/warehouse'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/artists/$artistId'
@@ -190,7 +230,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/mcp'
     | '/me'
+    | '/service'
     | '/signup'
+    | '/store'
+    | '/support'
+    | '/warehouse'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/artists/$artistId'
@@ -208,7 +252,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/mcp'
     | '/me'
+    | '/service'
     | '/signup'
+    | '/store'
+    | '/support'
+    | '/warehouse'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/artists/$artistId'
@@ -227,7 +275,11 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
   MeRoute: typeof MeRoute
+  ServiceRoute: typeof ServiceRoute
   SignupRoute: typeof SignupRoute
+  StoreRoute: typeof StoreRoute
+  SupportRoute: typeof SupportRoute
+  WarehouseRoute: typeof WarehouseRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -235,60 +287,25 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/warehouse': {
+      id: '/warehouse'
+      path: '/warehouse'
+      fullPath: '/warehouse'
+      preLoaderRoute: typeof WarehouseRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/artists': {
-      id: '/artists'
-      path: '/artists'
-      fullPath: '/artists'
-      preLoaderRoute: typeof ArtistsRouteImport
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/chart': {
-      id: '/chart'
-      path: '/chart'
-      fullPath: '/chart'
-      preLoaderRoute: typeof ChartRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/fanclub': {
-      id: '/fanclub'
-      path: '/fanclub'
-      fullPath: '/fanclub'
-      preLoaderRoute: typeof FanclubRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/feed': {
-      id: '/feed'
-      path: '/feed'
-      fullPath: '/feed'
-      preLoaderRoute: typeof FeedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/me': {
-      id: '/me'
-      path: '/me'
-      fullPath: '/me'
-      preLoaderRoute: typeof MeRouteImport
+    '/store': {
+      id: '/store'
+      path: '/store'
+      fullPath: '/store'
+      preLoaderRoute: typeof StoreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -298,33 +315,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.mcp/list-tools': {
-      id: '/.mcp/list-tools'
-      path: '/.mcp/list-tools'
-      fullPath: '/.mcp/list-tools'
-      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+    '/service': {
+      id: '/service'
+      path: '/service'
+      fullPath: '/service'
+      preLoaderRoute: typeof ServiceRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+    '/me': {
+      id: '/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof MeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/artists/': {
-      id: '/artists/'
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feed': {
+      id: '/feed'
+      path: '/feed'
+      fullPath: '/feed'
+      preLoaderRoute: typeof FeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fanclub': {
+      id: '/fanclub'
+      path: '/fanclub'
+      fullPath: '/fanclub'
+      preLoaderRoute: typeof FanclubRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chart': {
+      id: '/chart'
+      path: '/chart'
+      fullPath: '/chart'
+      preLoaderRoute: typeof ChartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/artists': {
+      id: '/artists'
+      path: '/artists'
+      fullPath: '/artists'
+      preLoaderRoute: typeof ArtistsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
       path: '/'
-      fullPath: '/artists/'
-      preLoaderRoute: typeof ArtistsIndexRouteImport
-      parentRoute: typeof ArtistsRoute
-    }
-    '/artists/$artistId': {
-      id: '/artists/$artistId'
-      path: '/$artistId'
-      fullPath: '/artists/$artistId'
-      preLoaderRoute: typeof ArtistsArtistIdRouteImport
-      parentRoute: typeof ArtistsRoute
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/feed/': {
       id: '/feed/'
@@ -333,12 +385,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeedIndexRouteImport
       parentRoute: typeof FeedRoute
     }
+    '/artists/': {
+      id: '/artists/'
+      path: '/'
+      fullPath: '/artists/'
+      preLoaderRoute: typeof ArtistsIndexRouteImport
+      parentRoute: typeof ArtistsRoute
+    }
     '/feed/$postId': {
       id: '/feed/$postId'
       path: '/$postId'
       fullPath: '/feed/$postId'
       preLoaderRoute: typeof FeedPostIdRouteImport
       parentRoute: typeof FeedRoute
+    }
+    '/artists/$artistId': {
+      id: '/artists/$artistId'
+      path: '/$artistId'
+      fullPath: '/artists/$artistId'
+      preLoaderRoute: typeof ArtistsArtistIdRouteImport
+      parentRoute: typeof ArtistsRoute
+    }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
@@ -384,7 +464,11 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,
   MeRoute: MeRoute,
+  ServiceRoute: ServiceRoute,
   SignupRoute: SignupRoute,
+  StoreRoute: StoreRoute,
+  SupportRoute: SupportRoute,
+  WarehouseRoute: WarehouseRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,

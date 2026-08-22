@@ -4,15 +4,15 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ------------------------------------------------------------------ *
- * pulseroom design tokens
- * Light, airy K-pop community palette: near-white canvas, white cards,
- * electric blue primary, coral/pink accents for "live" moments.
+ * deluxta design tokens
+ * Commerce palette: white canvas, soft gray tiles and rails, indigo-blue
+ * primary for banners and buttons, red reserved for discount rates.
  * ------------------------------------------------------------------ */
 :root {
   --radius: 0.875rem;
 
-  --background: oklch(0.972 0.003 264);
-  --foreground: oklch(0.213 0.021 264);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.205 0.019 264);
 
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.213 0.021 264);
@@ -20,11 +20,11 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.213 0.021 264);
 
-  /* electric blue — buttons, links, active states */
-  --primary: oklch(0.578 0.216 264.4);
+  /* indigo blue — hero banner, buttons, active nav */
+  --primary: oklch(0.545 0.196 268);
   --primary-foreground: oklch(0.99 0 0);
 
-  --secondary: oklch(0.965 0.005 264);
+  --secondary: oklch(0.963 0.003 264);
   --secondary-foreground: oklch(0.284 0.02 264);
 
   --muted: oklch(0.965 0.005 264);
@@ -38,10 +38,10 @@
 
   --border: oklch(0.922 0.006 264);
   --input: oklch(0.922 0.006 264);
-  --ring: oklch(0.578 0.216 264.4);
+  --ring: oklch(0.545 0.196 268);
 
   /* brand extras */
-  --brand: oklch(0.578 0.216 264.4);
+  --brand: oklch(0.545 0.196 268);
   --brand-ink: oklch(0.213 0.021 264);
   --live: oklch(0.63 0.229 21.5);
   --hot: oklch(0.646 0.222 29.5);
@@ -50,7 +50,7 @@
   --mellow: oklch(0.63 0.14 158);
   --kido: oklch(0.68 0.15 60);
 
-  --chart-1: oklch(0.578 0.216 264.4);
+  --chart-1: oklch(0.545 0.196 268);
   --chart-2: oklch(0.68 0.174 355);
   --chart-3: oklch(0.585 0.216 292);
   --chart-4: oklch(0.63 0.14 158);
@@ -58,12 +58,12 @@
 
   --sidebar: oklch(1 0 0);
   --sidebar-foreground: oklch(0.213 0.021 264);
-  --sidebar-primary: oklch(0.578 0.216 264.4);
+  --sidebar-primary: oklch(0.545 0.196 268);
   --sidebar-primary-foreground: oklch(0.99 0 0);
   --sidebar-accent: oklch(0.965 0.005 264);
   --sidebar-accent-foreground: oklch(0.284 0.02 264);
   --sidebar-border: oklch(0.922 0.006 264);
-  --sidebar-ring: oklch(0.578 0.216 264.4);
+  --sidebar-ring: oklch(0.545 0.196 268);
 }
 
 .dark {
