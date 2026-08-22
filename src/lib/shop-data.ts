@@ -11,11 +11,7 @@
  */
 
 export type StoreKey =
-  | "oliveyoung"
-  | "bunjang"
-  | "fansshop"
-  | "ktown4u"
-  | "yes24";
+  "oliveyoung" | "bunjang" | "fansshop" | "ktown4u" | "yes24";
 
 export type Store = {
   key: StoreKey;
